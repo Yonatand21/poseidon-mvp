@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>poseidon_sim_mock</name>
+  <version>0.0.0</version>
+  <description>
+    Placeholder ROS 2 node that publishes mock /auv/state, /ssv/state, and
+    environment topics. Used on ARM64 hosts where Stonefish is not
+    available so the rest of the graph can still be developed.
+  </description>
+
+  <maintainer email="contributors@poseidon-mvp.local">POSEIDON MVP contributors</maintainer>
+  <license>TBD</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
