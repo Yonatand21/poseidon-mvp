@@ -22,6 +22,24 @@ def generate_launch_description() -> LaunchDescription:
         description="Deterministic seed propagated to scenario engine and federation bridge.",
     )
 
+    declare_world_name = DeclareLaunchArgument(
+        "world_name",
+        default_value="dave_ocean_waves.world",
+        description="Planned DAVE world name for future AUV runtime integration.",
+    )
+
+    declare_vehicle_name = DeclareLaunchArgument(
+        "vehicle_name",
+        default_value="rexrov",
+        description="Planned stock AUV model name for future DAVE integration.",
+    )
+
+    declare_use_mock_backend = DeclareLaunchArgument(
+        "use_mock_backend",
+        default_value="true",
+        description="Keep Mac-safe mock backend enabled during prep/wiring phase.",
+    )
+
     # TODO(auv): include the DAVE world launch here. Typical pattern:
     #   IncludeLaunchDescription(
     #       PythonLaunchDescriptionSource(
@@ -49,12 +67,30 @@ def generate_launch_description() -> LaunchDescription:
     # runtime. Reference pattern is the mock in
     # poseidon-sim/auv_sim/src/mock_auv_runtime.py.
 
+    runtime_actions = [
+        # Future DAVE include/spawn/shim actions will be appended here.
+        # Keep empty during the Mac-safe prep/wiring phase.
+        #
+        # Planned action order:
+        # 1. Include DAVE world launch
+        # 2. Spawn stock AUV and remap native topics into /auv/state and /auv/sensors/*
+        # 3. Add a small shim that publishes /sim/auv/clock and /sim/auv/health
+        #    for the federation bridge, matching the mock_auv_runtime.py contract
+    ]
+
     banner = LogInfo(msg=[
         "auv_dave.launch.py skeleton - seed=", LaunchConfiguration("seed"),
+        " world_name=", LaunchConfiguration("world_name"),
+        " vehicle_name=", LaunchConfiguration("vehicle_name"),
+        " use_mock_backend=", LaunchConfiguration("use_mock_backend"),
         " - replace TODO sections with DAVE launch and remaps.",
     ])
 
     return LaunchDescription([
         declare_seed,
+        declare_world_name,
+        declare_vehicle_name,
+        declare_use_mock_backend,
+        *runtime_actions,
         banner,
     ])

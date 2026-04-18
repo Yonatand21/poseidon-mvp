@@ -48,6 +48,17 @@ services:
       - ../../poseidon-sim:/workspace/poseidon-sim:ro
     networks: [ros2net]
     profiles: [core, default]
+    # Mac-safe fallback during prep/wiring phase.
+    # Future Linux/NVIDIA DAVE path will replace this command after
+    # sim-auv-dave.Dockerfile and auv_dave.launch.py are fully wired.
+    #
+    # Planned shape:
+    # command: >
+    #   bash -lc "source /opt/ros/jazzy/setup.bash &&
+    #   ros2 launch auv_sim auv_dave.launch.py
+    #   use_mock_backend:=false
+    #   world_name:=dave_ocean_waves.world
+    #   vehicle_name:=rexrov"
     command: >
       bash -lc "source /opt/ros/jazzy/setup.bash &&
       python3 /workspace/poseidon-sim/auv_sim/src/mock_auv_runtime.py"

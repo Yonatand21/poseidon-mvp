@@ -6,6 +6,11 @@
 # Track: AUV runtime. Playbook: docs/runbooks/integration-auv-dave.md
 # Contract: SYSTEM_DESIGN.md Section 14 (Interface contracts).
 # Layer invariants: AGENTS.md Rule 1.1, 1.5.
+#
+# Important:
+# - This image is a Linux/NVIDIA-targeted placeholder during the prep phase.
+# - Do not try to build real DAVE from this file on Mac arm64.
+# - Keep mock_auv_runtime.py as the Mac-safe fallback until cloud-box wiring.
 
 ARG POSEIDON_IMAGE_REGISTRY=ghcr.io/yonatand21/poseidon-mvp
 ARG POSEIDON_IMAGE_TAG=dev
@@ -14,6 +19,7 @@ FROM ${POSEIDON_IMAGE_REGISTRY}/poseidon-base-dev:${POSEIDON_IMAGE_TAG}
 LABEL org.opencontainers.image.description="POSEIDON MVP - AUV runtime (DAVE on Gazebo Harmonic)"
 LABEL poseidon.runtime="dave"
 LABEL poseidon.vehicle="auv"
+LABEL poseidon.host_requirement="linux-nvidia"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -40,6 +46,10 @@ USER poseidon
 WORKDIR /workspace
 
 # TODO(auv): default to the DAVE launch file once implemented.
+# Planned shape:
 # CMD ["bash", "-lc", "source /opt/ros/jazzy/setup.bash && \
-#      ros2 launch poseidon_auv_sim auv_dave.launch.py"]
-CMD ["bash", "-lc", "echo 'sim-auv-dave placeholder - see docs/runbooks/integration-auv-dave.md' && sleep infinity"]
+#      ros2 launch auv_sim auv_dave.launch.py \
+#      use_mock_backend:=false \
+#      world_name:=dave_ocean_waves.world \
+#      vehicle_name:=rexrov"]
+CMD ["bash", "-lc", "echo 'sim-auv-dave placeholder - Linux/NVIDIA only, Mac uses mock_auv_runtime.py during prep' && sleep infinity"]
