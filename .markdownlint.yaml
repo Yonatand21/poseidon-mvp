@@ -1,0 +1,9 @@
+---
+# markdownlint config. Keep lenient on line-length and inline-html since
+# design docs use long prose and ASCII diagrams.
+default: true
+MD013: false  # line-length - disabled, design docs have long lines
+MD033: false  # inline-html - allowed for tables and diagrams
+MD041: false  # first-line-h1 - design docs vary
+MD024:
+  siblings_only: true  # allow duplicate headings under different parents
