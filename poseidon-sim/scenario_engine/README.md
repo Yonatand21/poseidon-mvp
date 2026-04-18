@@ -1,37 +1,25 @@
 # scenario_engine
 
-The scenario file is the single artifact that defines a run. Same scenario +
-same seed + same `ai_mode` => same run.
+The scenario file is the single source of truth for each run.
 
-**Design reference:** `SYSTEM_DESIGN.md` Section 12 (Scenario engine).
+For fixed scenario + seed + ai mode, the run should be reproducible.
 
 ## Responsibilities
 
-1. Validate YAML against the schema in `schemas/`.
-2. Invoke the archetype generator in `../world_generator/` to produce
-   bathymetry, currents, traffic.
-3. Emit the Stonefish scene XML referencing the vehicle configs under
-   `../../vehicles/`.
-4. Launch the ROS 2 graph: Stonefish, sensor nodes, nav nodes, classical
-   autonomy, Layer 3 AI modules per the `ai` block, coupling, comms pipe,
-   evaluation recorder.
-5. Tick mission phases. Issue `/coupling/drop_cmd`, transition conditions,
-   fault injections, GNSS schedule.
-6. Manage the simulation clock; record MCAP for the configured duration.
-7. On completion, invoke the evaluation pipeline in `../evaluation/`.
-
-## Subdirs
-
-- `src/` - orchestrator (Python), fault injector, mission-phase sequencer.
-- `schemas/` - Pydantic / JSON Schema for scenario YAML. Hydra overlays.
-- `scenarios/` - library scenarios owned by the engine (seed-locked
-  regression runs). The user-facing scenario library lives in
-  `../../scenarios/` at the repo root.
+1. Validate scenario YAML schema.
+2. Invoke `world_generator` to produce environment artifacts.
+3. Emit runtime configs for:
+   - DAVE AUV runtime
+   - VRX SSV runtime
+   - federation/time-sync bridge
+4. Launch ROS 2 graph for both runtimes, federation, nav/autonomy, recorder, evaluation.
+5. Drive mission phases and fault injections.
+6. Publish `/scenario/clock`.
+7. Finalize MCAP metadata and trigger evaluation pipeline.
 
 ## Stack
 
-- `Hydra` for config composition.
-- `Pydantic` for schema validation.
-- `pytest` + `hypothesis` for property-based determinism tests.
+- Hydra for config composition.
+- Pydantic for schema validation.
+- pytest/hypothesis for determinism tests.
 
-See `OPEN_SOURCE_STACK.md` Section 2.9.

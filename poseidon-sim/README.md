@@ -1,40 +1,33 @@
 # poseidon-sim
 
-Application code for POSEIDON MVP. Layout follows `SYSTEM_DESIGN.md` Section 15.
+Application code for POSEIDON MVP. Layout follows the federated Gazebo architecture in `SYSTEM_DESIGN.md`.
 
 ## Layer map
 
 | Directory | Layer | Responsibility |
 | --- | --- | --- |
-| `env_service/` | 1 | Ocean state service (wave, current, wind, SSP, noise). |
-| `world_generator/` | 1 | Procedural archetype generator (heightfield, obstacles, traffic, currents). |
-| `auv_sim/` | 1 | Stonefish integration for the AUV (plugins, sensor mounts). |
-| `ssv_sim/` | 1 | Stonefish integration for the SSV. |
-| `sensor_models/` | 1 | Pluggable sensor models (IMU, DVL, depth, sonar, GNSS, compass, radar, camera, USBL, acoustic modem). |
-| `coupling/` | 1/2 | Carries / drop handoff state machine and acoustic+RF comms pipe. |
-| `nav/` | 2 (and `gnss_env`, `acoustic_env` are 1) | EKF/UKF fusion per vehicle; GNSS and acoustic-env nodes. |
+| `env_service/` | 1 | Canonical ocean/environment state service. |
+| `world_generator/` | 1 | Procedural archetype generator and runtime projection outputs. |
+| `auv_sim/` | 1 | DAVE-side AUV simulation integration and topic adapters. |
+| `ssv_sim/` | 1 | VRX-side SSV simulation integration and topic adapters. |
+| `sensor_models/` | 1 | Sensor wrappers and normalization for common topic contracts. |
+| `coupling/` | 1/2 | Federation bridge: time sync, mission event ordering, runtime health. |
+| `nav/` | 2 | Estimation and nav environment degradation nodes. |
 | `autonomy_auv/` | 2 | AUV classical autonomy and safety invariants. |
 | `autonomy_ssv/` | 2 | SSV classical autonomy and safety invariants. |
-| `ai/` | 3 | Advisory perception, planning, risk, anomaly detection. Advisory only. |
-| `scenario_engine/` | orchestration | YAML schema, scene generation, ROS 2 graph launcher, fault injector. |
-| `evaluation/` | 4 | Metrics, plots, dashboards, reports, offline Evaluation AI. |
-| `rendering/` | visual | Unreal Engine bridge and scene consumers. |
-| `tools/` | developer | CAD pipeline scripts, archetype preview utilities. |
+| `ai/` | 3 | Advisory perception/planning/risk modules. |
+| `scenario_engine/` | orchestration | Scenario schema, launch orchestration, run control. |
+| `evaluation/` | 4 | Metrics, reports, dashboards, offline evaluation AI. |
+| `rendering/` | visual | UNav-Sim primary / PoseidonUE fallback visual path. |
+| `tools/` | dev | CAD/import and archetype tooling utilities. |
 
-## Layer rules
+## Hard rules
 
-See [AGENTS.md](../AGENTS.md) for the hard rules. In short:
+See `AGENTS.md`:
 
-- Only `autonomy_auv/**` and `autonomy_ssv/**` publish actuator topics.
-- `ai/**` is advisory. It never publishes actuator topics and is never a
-  hard dependency of Layer 2.
-- Safety invariants in `autonomy_*/safety_invariants` run unconditionally.
-- Ground-truth `/auv/state` and `/ssv/state` are consumed only by `evaluation/`.
+- Layer 2 exclusively owns actuator topics.
+- Layer 3 is advisory-only.
+- Federation bridge semantics are owned by `coupling/**`.
+- Dual-runtime ownership is fixed: DAVE owns AUV truth, VRX owns SSV truth.
+- Ground-truth topics are not valid control-loop inputs.
 
-## Status
-
-All modules are scaffold-only. Per the 24-hour hackathon sprint plan
-(`SYSTEM_DESIGN.md` Section 18.2), first real code lands in a subset of
-`env_service/`, `auv_sim/`, `ssv_sim/`, `sensor_models/`, `nav/`,
-`autonomy_auv/`, `autonomy_ssv/`, `scenario_engine/`, `evaluation/`,
-`rendering/bridge/`, and the choke-point archetype in `world_generator/`.

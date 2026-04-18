@@ -1,37 +1,23 @@
 # poseidon-platform
 
-Umbrella Helm chart for POSEIDON MVP. Deploys the full platform to k3s
-(partner on-prem) or upstream Kubernetes (multi-tenant).
-
-**Design reference:** `INFRASTRUCTURE_DESIGN.md` Section 4 (Orchestration),
-Section 4.4 (Helm charts).
+Umbrella Helm chart for deploying POSEIDON federated runtime components.
 
 ## Usage
 
-```
+```bash
 helm lint charts/poseidon-platform
-
-# Profile A, dev on k3s
 helm install poseidon charts/poseidon-platform -f charts/poseidon-platform/values-dev.yaml
-
-# Profile B, partner on-prem (air-gap capable)
-helm install poseidon charts/poseidon-platform -f charts/poseidon-platform/values-onprem.yaml
-
-# Multi-tenant Kubernetes
-helm install poseidon charts/poseidon-platform -f charts/poseidon-platform/values-multitenant.yaml
 ```
 
 ## Subcharts
 
-| Chart | Tier | Enabled in | Notes |
-| --- | --- | --- | --- |
-| `simulation-core` | mission-essential | always | Stonefish, sensor plugins, Layer 1 and 2 nodes. |
-| `scenario-engine` | mission-essential | always | Orchestrator. |
-| `evaluation` | mission-essential | always | Metrics pipeline + Foxglove / MCAP storage. |
-| `rendering` | mission-enhancing | Profile A | UE5 headless render + bridge. |
-| `dashboard` | mission-enhancing | dev + multi-tenant | Web UI. |
-| `gateway` | multi-tenant | multi-tenant | API gateway, auth front-door. |
-| `observability` | mission-enhancing | on-prem + multi-tenant | Prometheus, Grafana, Loki, OTel. |
+| Chart | Tier | Notes |
+| --- | --- | --- |
+| `simulation-core` | mission-essential | Includes `sim-auv` (DAVE), `sim-ssv` (VRX), federation bridge, env/nav/autonomy core. |
+| `scenario-engine` | mission-essential | Scenario orchestration and run lifecycle. |
+| `evaluation` | mission-essential | MCAP recording and KPI processing. |
+| `rendering` | mission-enhancing | UNav-Sim path and PoseidonUE fallback bridge. |
+| `dashboard` | optional | Web UI and run browsing. |
+| `gateway` | optional | API/auth front door for managed deployments. |
+| `observability` | optional | Prometheus/Grafana/Loki stack. |
 
-All subcharts ship at `version: 0.0.0` and contain only a `Chart.yaml` +
-placeholder `values.yaml` until real templates land.
