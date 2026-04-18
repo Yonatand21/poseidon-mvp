@@ -121,6 +121,20 @@ docker compose -f deploy/compose/docker-compose.yml ps foxglove unav-sim-render 
 
 ---
 
+## Active tracks
+
+Parallel workstreams, each self-contained. Pick up any track; the runbook is the contract.
+
+| Track | Goal | Runbook | Touches |
+| --- | --- | --- | --- |
+| AUV runtime | Replace mock AUV with DAVE on Gazebo Harmonic | [`docs/runbooks/integration-auv-dave.md`](./docs/runbooks/integration-auv-dave.md) | `poseidon-sim/auv_sim/`, `deploy/docker/sim-auv-dave.Dockerfile` |
+| SSV runtime | Replace mock SSV with VRX on Gazebo Harmonic | [`docs/runbooks/integration-ssv-vrx.md`](./docs/runbooks/integration-ssv-vrx.md) | `poseidon-sim/ssv_sim/`, `deploy/docker/sim-ssv-vrx.Dockerfile` |
+| Tier-2 evaluation | MCAP -> KPI -> Streamlit dashboard chain | [`docs/runbooks/tier-2-evaluation.md`](./docs/runbooks/tier-2-evaluation.md) | `poseidon-sim/evaluation/` |
+
+All three runtimes must honor [`SYSTEM_DESIGN.md`](./SYSTEM_DESIGN.md) Section 14 (Interface contracts). Validate against: `tests/integration/test_runtime_contract.py`.
+
+---
+
 ## Documentation map
 
 Read in this order:

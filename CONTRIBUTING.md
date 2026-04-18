@@ -23,6 +23,16 @@ helm lint charts/poseidon-platform
 - Feature branches: `<owner>/<scope>-<short-desc>`, e.g. `robert/auv_nav-ekf-tuning`.
 - Rebase on `main` before merging. Prefer small, reviewable PRs.
 
+### Active track branches
+
+Parallel workstreams (see `README.md` Active tracks). Branch names are track-based, not person-based:
+
+- `feat/auv-dave-integration` - AUV runtime (DAVE on Gazebo Harmonic)
+- `feat/ssv-vrx-integration` - SSV runtime (VRX on Gazebo Harmonic)
+- `feat/tier-2-evaluation` - Tier-2 KPI pipeline and Streamlit UI
+
+Each track's runbook in `docs/runbooks/` defines done-criteria. Runtime integration PRs must pass the shared contract test (`tests/integration/test_runtime_contract.py`) and Tier-1 verification before merge.
+
 ## Commit messages
 
 Follow Conventional Commits where practical:
