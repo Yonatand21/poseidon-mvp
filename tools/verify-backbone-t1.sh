@@ -209,6 +209,31 @@ if [[ "$PUBLISHING_AUV" -ne 1 || "$PUBLISHING_SSV" -ne 1 || "$PUBLISHING_SCENARI
 fi
 pass "federated compose services publish /auv/state, /ssv/state, and /scenario/clock"
 
+# ---- step 6: recordings contract-check (optional, host-side) ----
+# If any MCAPs exist under recordings/ AND the `mcap` + `mcap_ros2`
+# libs are importable on the host, validate the newest one against the
+# Section 14 runtime contract. Skipped gracefully otherwise so Tier 1
+# stays runnable on hosts that haven't installed the eval extras.
+info "looking for recordings to contract-check"
+LATEST_MCAP="$(ls -1t recordings/*/*.mcap 2>/dev/null | head -1 || true)"
+if [[ -z "${LATEST_MCAP}" ]]; then
+    info "no MCAP under recordings/ - skipping contract-check"
+elif ! python3 -c "import mcap, mcap_ros2" >/dev/null 2>&1; then
+    info "mcap libs not installed on host - skipping contract-check"
+    info "  (run: uv sync --extra eval)"
+else
+    info "contract-checking ${LATEST_MCAP}"
+    if PYTHONPATH="${REPO_ROOT}/poseidon-sim" \
+        python3 -m evaluation.metrics.extract \
+            --mcap "${LATEST_MCAP}" \
+            --strict \
+            --no-write >> "$LOG_FILE" 2>&1; then
+        pass "recordings contract-check passed for ${LATEST_MCAP##*/}"
+    else
+        fail "recordings contract-check FAILED for ${LATEST_MCAP} (see $LOG_FILE)"
+    fi
+fi
+
 printf "\n%s[DONE]%s Tier 1 verification passed.\n" "$GREEN" "$RESET"
 printf "Full log: %s\n" "$LOG_FILE"
 if [[ "$KEEP_UP" == "yes" ]]; then
