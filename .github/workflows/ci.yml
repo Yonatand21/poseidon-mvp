@@ -98,6 +98,11 @@ jobs:
   evaluation-metrics:
     name: evaluation metrics + contract check
     runs-on: ubuntu-latest
+    env:
+      # pytest picks this up from pyproject.toml; raw `python` / `python -m`
+      # invocations in this job need the same path injection so the
+      # dash-named source tree is importable.
+      PYTHONPATH: poseidon-sim
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
