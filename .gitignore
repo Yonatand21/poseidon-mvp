@@ -76,3 +76,6 @@ htmlcov/
 
 # OS
 Thumbs.db
+
+# Verify-tier logs
+.verify-*.log
