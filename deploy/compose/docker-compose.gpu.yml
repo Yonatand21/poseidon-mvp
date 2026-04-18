@@ -1,0 +1,55 @@
+---
+# NVIDIA GPU overlay for Linux hosts with the NVIDIA Container Toolkit.
+# Layered on top of docker-compose.yml for the cloud demo box.
+#
+# Usage:
+#   docker compose \
+#     -f docker-compose.yml \
+#     -f docker-compose.gpu.yml \
+#     --profile core --profile ai --profile viz \
+#     up
+#
+# Prereqs on the host:
+#   - NVIDIA driver 550+
+#   - nvidia-container-toolkit
+#   - docker daemon configured with "nvidia" runtime (automatic on recent
+#     toolkit versions).
+#
+# INFRASTRUCTURE_DESIGN.md Section 2.3 (GPU and compute).
+
+services:
+  sim:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,graphics,utility"
+
+  ai-runtime:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+
+  unreal-bridge:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,graphics,utility"
