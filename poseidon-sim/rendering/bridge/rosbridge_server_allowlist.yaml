@@ -1,0 +1,37 @@
+---
+# rosbridge_server topic allowlist.
+#
+# Enforces AGENTS.md Rule 1.1 at the network layer: Unreal Engine can
+# subscribe only to topics listed below. Actuator topics
+# (/auv/thruster_cmd, /auv/fin_cmd, /ssv/thruster_cmd, /ssv/rudder_cmd)
+# are deliberately absent. tools/check_layer_permissions.py will fail
+# if any actuator topic appears here.
+#
+# Consumed by bridge.launch.py and passed to rosbridge_server via the
+# `topics_glob` parameter.
+
+rosbridge_server:
+  ros__parameters:
+    # Read-only topics exposed to Unreal. Subscriptions only.
+    topics_glob: >
+      [
+        /auv/state,
+        /ssv/state,
+        /env/wave_state,
+        /env/wind,
+        /env/visibility,
+        /env/sound_speed_profile,
+        /coupling/payload_state,
+        /coupling/drop_cmd,
+        /scenario/clock,
+        /scenario/event,
+        /ai/anomaly/gnss_spoof_flag,
+        /ai/anomaly/nav_integrity_score
+      ]
+    services_glob: "[]"
+    params_glob: "[]"
+    # Disable the advertise endpoint so UE cannot create publishers.
+    # Layer 3 and visualization clients are consumers only.
+    protocol: websocket
+    port: 9090
+    address: "0.0.0.0"
