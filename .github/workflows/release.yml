@@ -1,0 +1,34 @@
+---
+# POSEIDON MVP - Release workflow.
+#
+# Disabled until the first taggable artifact exists. When enabled, this
+# workflow will:
+#   1. Build and push per-profile images (dev, edge, edge-rhel).
+#   2. Sign images with cosign.
+#   3. Generate SBOMs with syft.
+#   4. Scan with grype / trivy; block on high-severity CVEs.
+#   5. Package the umbrella Helm chart.
+#   6. Run the Profile B deterministic regression suite.
+#   7. Assemble the offline release bundle for air-gap partners.
+#   8. Publish signed tarballs and GitHub release notes.
+#
+# Reference: INFRASTRUCTURE_DESIGN.md Section 11 (CI/CD) and Section 17.3
+# (Edge profile operational invariants).
+
+name: release
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  disabled:
+    name: release workflow disabled
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: |
+          echo "Release workflow is disabled until the first taggable artifact exists."
+          echo "See .github/workflows/release.yml for the planned pipeline."
