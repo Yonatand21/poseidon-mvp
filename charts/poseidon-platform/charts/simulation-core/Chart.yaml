@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: simulation-core
-description: Mission-essential core - Stonefish, sensor plugins, nav, classical autonomy.
+description: Mission-essential core - Gazebo Harmonic + DAVE + VRX runtimes, sensor plugins, nav, classical autonomy.
 type: application
 version: 0.0.0
 appVersion: "0.0.0"

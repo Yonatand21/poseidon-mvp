@@ -5,9 +5,10 @@ nav_msgs/Odometry, plus a simple wave-state scalar vector on
 /env/wave_state. Seed-determined so downstream consumers see repeatable
 input across runs.
 
-This is a stand-in for Stonefish on hosts where Stonefish does not build
-(today: linux/arm64). It has no physics fidelity. It is not used on the
-cloud box or in CI - those paths use the real sim.
+This is a stand-in for the Gazebo Harmonic + DAVE + VRX runtime on hosts
+where that stack is not available (today: linux/arm64 Apple Silicon dev).
+It has no physics fidelity. It is not used on the cloud box or in CI -
+those paths use the real sim per OPEN_SOURCE_STACK.md Section 2.
 
 AGENTS.md constraints honored:
 - Publishes /auv/state and /ssv/state on behalf of Layer 1. These are

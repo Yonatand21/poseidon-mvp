@@ -14,7 +14,7 @@ setup(
     zip_safe=True,
     maintainer="POSEIDON MVP contributors",
     maintainer_email="contributors@poseidon-mvp.local",
-    description="Mock sim world publisher for ARM64 hosts without Stonefish.",
+    description="Mock sim world publisher for hosts without the Gazebo Harmonic + DAVE + VRX runtime (e.g. linux/arm64 dev).",
     license="TBD",
     entry_points={
         "console_scripts": [

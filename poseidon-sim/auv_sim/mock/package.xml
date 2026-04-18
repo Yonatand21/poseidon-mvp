@@ -4,8 +4,10 @@
   <version>0.0.0</version>
   <description>
     Placeholder ROS 2 node that publishes mock /auv/state, /ssv/state, and
-    environment topics. Used on ARM64 hosts where Stonefish is not
-    available so the rest of the graph can still be developed.
+    environment topics. Used on hosts where the full Gazebo Harmonic +
+    DAVE + VRX runtime is not available (today: linux/arm64 Apple Silicon
+    dev) so downstream nav, autonomy, rendering, and evaluation graphs
+    can still be developed.
   </description>
 
   <maintainer email="contributors@poseidon-mvp.local">POSEIDON MVP contributors</maintainer>

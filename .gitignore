@@ -44,15 +44,16 @@ build/
 install/
 log/
 
-# Stonefish / Unreal artifacts (local)
+# Unreal artifacts (local)
 *.pdb
 Saved/
 Intermediate/
 DerivedDataCache/
 Binaries/
 
-# Generated scene files
-*.stonefish.xml.generated
+# Generated scene files (DAVE / VRX / Gazebo SDF emitted by world_generator)
+*.sdf.generated
+*.world.generated
 
 # MCAP recordings (tracked via LFS when committed; local scratch ignored)
 recordings/
