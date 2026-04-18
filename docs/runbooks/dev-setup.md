@@ -10,13 +10,13 @@ for linting and local Helm tests.
 
 | Platform | Runtime | Supported | Notes |
 | --- | --- | --- | --- |
-| macOS 14+ on Apple Silicon (M1-M4) | Docker Desktop (ARM64 containers) | Yes - primary | Daily dev. Stonefish + GPU runs happen on the shared cloud box, not on the Mac. |
+| macOS 14+ on Apple Silicon (M1-M4) | Docker Desktop (ARM64 containers) | Yes - primary | Daily dev. DAVE / VRX / UNav-Sim and GPU runs happen on the shared cloud box, not on the Mac (no Linux/amd64 + NVIDIA locally). |
 | macOS 14+ on Intel | Docker Desktop (amd64 containers) | Yes | Same as Apple Silicon except amd64. |
-| Ubuntu 22.04 / 24.04 | Docker Engine | Yes - primary | Matches the deploy target. NVIDIA optional for local GPU work. |
+| Ubuntu 22.04 / 24.04 | Docker Engine | Yes - primary | Matches the deploy target. NVIDIA GPU optional but unlocks local DAVE + VRX + UNav-Sim without the cloud box. |
 | Debian 12, Pop!_OS, Linux Mint | Docker Engine | Yes | Same as Ubuntu (apt path). |
 | Fedora, RHEL 9, Rocky 9, Alma 9 | Docker Engine | Yes | dnf path in the setup script. |
 | Windows 10/11 + WSL2 Ubuntu | Docker Desktop (WSL2 backend) | Yes | Treat as Linux inside WSL2. |
-| Windows native (no WSL2) | n/a | **No** | ROS 2 Windows is flaky; Stonefish has no Windows build. Use WSL2. |
+| Windows native (no WSL2) | n/a | **No** | ROS 2 Windows is flaky; Gazebo Harmonic / DAVE / VRX target Linux. Use WSL2. |
 | Chromebook (ChromeOS Linux dev env) | Docker in Crostini | Best effort | Works for lint-only work; no GPU / heavy sim. |
 
 ## Choose your path
@@ -186,7 +186,7 @@ deploy/compose/docker-compose.yml --profile core up`.
 ## Related runbooks
 
 - [`cloud-demo-box.md`](cloud-demo-box.md) - shared Linux + NVIDIA GPU box
-  for Stonefish, full-fidelity Unreal, and the determinism regression
-  suite.
+  for Gazebo Harmonic + DAVE + VRX, full-fidelity UNav-Sim / UE5, and the
+  determinism regression suite.
 - [`../architecture/`](../architecture/) - ADRs explaining why we chose the
   tools we chose.

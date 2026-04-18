@@ -1,9 +1,15 @@
 # Shared cloud demo box (Linux + NVIDIA GPU)
 
-The team runs Stonefish, Unreal at demo fidelity, CUDA AI inference, and the
-determinism regression suite on a shared Linux host with an NVIDIA GPU.
-Every team member keeps dev work local (Mac / Linux / WSL2), then SSHes
-into this box for heavy work and demos.
+The team runs the federated Gazebo stack (Gazebo Harmonic + DAVE + VRX),
+UNav-Sim / Unreal at demo fidelity, CUDA AI inference, and the determinism
+regression suite on a shared Linux host with an NVIDIA GPU. Every team
+member keeps dev work local (Mac / Linux / WSL2), then SSHes into this
+box for heavy work, demos, and release-gate runs.
+
+Contributors with a local Linux x86_64 workstation and an NVIDIA GPU can
+run DAVE + VRX + UNav-Sim locally for functional development. The shared
+box remains the canonical target for determinism runs and demo-fidelity
+rendering regardless.
 
 This runbook covers provisioning, bringing up the POSEIDON stack, managing
 cost, and day-to-day SSH workflow.
@@ -14,16 +20,20 @@ cost, and day-to-day SSH workflow.
 
 | Task | Runs on the cloud box? | Why |
 | --- | --- | --- |
-| Stonefish physics + sensor sim | Yes | Linux-only, no ARM64 build |
-| Demo-fidelity Unreal (water, terrain, lighting) | Yes | Needs NVIDIA GPU |
+| Gazebo Harmonic + DAVE (AUV runtime) | Yes | Linux/amd64 containers only; GPU accelerates Ogre2 rendering |
+| Gazebo Harmonic + VRX (SSV runtime) | Yes | Same — Linux/amd64, GPU for ocean/wave rendering |
+| UNav-Sim + UE5 demo-fidelity visuals | Yes | Needs NVIDIA GPU; no CUDA on Apple Silicon |
 | CUDA-accelerated AI inference (Layer 3 runtime) | Yes | CoreML on Mac is a different path |
-| Determinism regression suite | Yes | Release gate per `SYSTEM_DESIGN.md` Section 17.3 |
+| Determinism regression suite | Yes | Release gate per `SYSTEM_DESIGN.md` Section 17.3; canonical host only |
 | Multi-seed sweep runs | Yes | Parallel scenarios, CPU + GPU heavy |
 | Writing code, reviewing PRs, CI authoring | No | Local Mac / Linux is faster |
 | Helm chart edits, docker compose on placeholders | No | Works on Mac |
 | Foxglove review of a local MCAP | No | Mac Foxglove is fine |
 
-Rule of thumb: **if the task runs Stonefish or uses a GPU, use the cloud box.**
+Rule of thumb: **if the task runs DAVE, VRX, UNav-Sim, or touches a GPU,
+use the cloud box — unless you have a local Linux x86_64 workstation with
+an NVIDIA GPU, in which case local is fine for functional work but
+determinism runs still belong on the shared box.**
 
 ---
 
@@ -55,7 +65,7 @@ persistent SSH-accessible VMs.
 
 - GPU: RTX 4090 (24 GB VRAM) or RTX A5000 / L4 / A10G as fallback.
 - CPU: 16+ vCPU.
-- RAM: 64 GB (Stonefish + Unreal + multiple services).
+- RAM: 64 GB (Gazebo Harmonic + DAVE + VRX + UE5 + federation bridge + multiple services).
 - Disk: 200 GB NVMe + 200 GB attached volume for MCAP archive.
 - Network: >= 1 Gbps for image pulls and MCAP upload.
 
