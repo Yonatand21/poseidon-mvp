@@ -1,4 +1,4 @@
-# POSEIDEN MVP - Open-Source Stack
+# POSEIDON MVP - Open-Source Stack
 
 Companion document to `SYSTEM_DESIGN.md`. Lists every open-source dependency the MVP plans to adopt, what we use it for, what we explicitly chose not to use, and the build-vs-buy rationale.
 

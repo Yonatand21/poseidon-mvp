@@ -1,4 +1,4 @@
-# POSEIDEN MVP - Maritime Test and Evaluation Environment
+# POSEIDON MVP - Maritime Test and Evaluation Environment
 
 ## One-line framing
 
@@ -923,7 +923,7 @@ A ROS 2 bridge node streams `/tf` and vehicle/env state topics into Unreal. Blue
 ## 15. Repository layout
 
 ```
-poseiden-sim/
+poseidon-sim/
   env_service/                  # Layer 1: ocean state
     src/
     config/

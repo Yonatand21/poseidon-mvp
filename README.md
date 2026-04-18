@@ -1,4 +1,4 @@
-# POSEIDEN MVP
+# POSEIDON MVP
 
 A software-based maritime test and evaluation environment for AUV (Autonomous Underwater Vehicle) and SSV (Surface Support Vessel) performance across controllable ocean and navigation conditions - including GNSS-denied and contested environments - with classical control, AI augmentation, and AI-driven evaluation.
 
@@ -41,7 +41,7 @@ Key sections:
 - **12: Scenario engine.** How scenarios are defined, parameterized, and swept.
 - **13: Evaluation and metrics (Layer 4).** What we measure and how we score runs.
 - **14: Unreal visual layer.** Rendering and hero-asset visuals.
-- **15: Repository layout.** Planned code tree for `poseiden-sim/`.
+- **15: Repository layout.** Planned code tree for `poseidon-sim/`.
 - **16: Interface contracts.** ROS 2 topics, messages, and layer boundaries.
 - **17: Platform profiles and edge deployability.** Profile A vs Profile B compatibility matrix.
 - **18: Execution plan.** 24-hour hackathon vertical slice, then post-hackathon build-out.
@@ -68,8 +68,8 @@ Key sections:
 
 - **1: Audiences and deployment modes.** Runtime profiles x topologies. Design principles.
 - **2: Base Linux environment.** OS, kernel, GPU, host packages.
-- **3: Container strategy.** The `poseiden-*` image family, signing, SBOMs, offline bundles.
-- **4: Orchestration.** Docker Compose, k3s, Kubernetes. Helm chart layout under `poseiden-platform/`.
+- **3: Container strategy.** The `poseidon-*` image family, signing, SBOMs, offline bundles.
+- **4: Orchestration.** Docker Compose, k3s, Kubernetes. Helm chart layout under `poseidon-platform/`.
 - **5-7: Data, compute, scaling.** MCAP storage, PostgreSQL, MinIO, GPU scheduling, sweep workers.
 - **8-9: Networking and security.** DDS, air-gap, zero-trust, cosign, secrets, auth.
 - **10: Observability.** Prometheus, Grafana, Loki, OpenTelemetry.

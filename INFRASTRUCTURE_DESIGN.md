@@ -1,4 +1,4 @@
-# POSEIDEN MVP - Infrastructure and Scaling Design
+# POSEIDON MVP - Infrastructure and Scaling Design
 
 Companion document to `SYSTEM_DESIGN.md` and `OPEN_SOURCE_STACK.md`. This doc covers the Linux-native infrastructure, deployment modes, scaling architecture, security posture, and compliance roadmap required to deliver the platform to national-security and commercial partners.
 
@@ -91,24 +91,24 @@ Containers are the primary unit of distribution. Every application component shi
 Two base families are maintained in parallel, aligned to the two runtime profiles:
 
 ```
-poseiden-base-dev                 # Ubuntu 24.04 + ROS 2 Jazzy        (Profile A)
-poseiden-base-edge                # Ubuntu 22.04 + ROS 2 Humble        (Profile B, baseline)
-poseiden-base-edge-rhel           # RHEL/Rocky 9 + ROS 2 Humble/Jazzy (Profile B, RHEL)
+poseidon-base-dev                 # Ubuntu 24.04 + ROS 2 Jazzy        (Profile A)
+poseidon-base-edge                # Ubuntu 22.04 + ROS 2 Humble        (Profile B, baseline)
+poseidon-base-edge-rhel           # RHEL/Rocky 9 + ROS 2 Humble/Jazzy (Profile B, RHEL)
 
 (each base ->)
- +-- poseiden-sim                 # Stonefish + physics + sensor plugins (mission-essential core)
- +-- poseiden-nav                 # robot_localization + nav stacks     (mission-essential core)
- +-- poseiden-autonomy            # classical autonomy (Layer 2)         (mission-essential core)
- +-- poseiden-scenario-engine     # orchestrator                         (mission-essential core)
- +-- poseiden-eval                # metrics + report generation          (mission-essential core)
- +-- poseiden-ai-runtime          # Layer 3 inference                    (mission-enhancing, optional)
- +-- poseiden-eval-ai             # Layer 4 LLM summarization            (mission-enhancing, optional)
- +-- poseiden-unreal              # UE5 headless render / bridge         (mission-enhancing, dev/demo only)
- +-- poseiden-dashboard           # web UI                               (mission-enhancing, optional)
- +-- poseiden-gateway             # API gateway / auth front-door        (multi-tenant only)
+ +-- poseidon-sim                 # Stonefish + physics + sensor plugins (mission-essential core)
+ +-- poseidon-nav                 # robot_localization + nav stacks     (mission-essential core)
+ +-- poseidon-autonomy            # classical autonomy (Layer 2)         (mission-essential core)
+ +-- poseidon-scenario-engine     # orchestrator                         (mission-essential core)
+ +-- poseidon-eval                # metrics + report generation          (mission-essential core)
+ +-- poseidon-ai-runtime          # Layer 3 inference                    (mission-enhancing, optional)
+ +-- poseidon-eval-ai             # Layer 4 LLM summarization            (mission-enhancing, optional)
+ +-- poseidon-unreal              # UE5 headless render / bridge         (mission-enhancing, dev/demo only)
+ +-- poseidon-dashboard           # web UI                               (mission-enhancing, optional)
+ +-- poseidon-gateway             # API gateway / auth front-door        (multi-tenant only)
 ```
 
-The mission-essential core tags (`poseiden-sim`, `poseiden-nav`, `poseiden-autonomy`, `poseiden-scenario-engine`, `poseiden-eval`) build against **both** `poseiden-base-dev` and `poseiden-base-edge`. Mission-enhancing images may build against `poseiden-base-dev` only.
+The mission-essential core tags (`poseidon-sim`, `poseidon-nav`, `poseidon-autonomy`, `poseidon-scenario-engine`, `poseidon-eval`) build against **both** `poseidon-base-dev` and `poseidon-base-edge`. Mission-enhancing images may build against `poseidon-base-dev` only.
 
 Principles:
 
@@ -188,7 +188,7 @@ All three modes use the same set of Helm charts, parameterized by mode:
 
 ```
 charts/
-  poseiden-platform/              # umbrella chart
+  poseidon-platform/              # umbrella chart
     charts/
       simulation-core/
       scenario-engine/
@@ -691,7 +691,7 @@ Ubuntu 24.04 laptop, RTX 4070, 32 GB RAM, 1 TB NVMe
 One 64-core workstation, 2x RTX 4090, 256 GB RAM, 8 TB NVMe + 50 TB HDD
 -----------------------------------------------------------------------
   k3s server (single node):
-    namespace: poseiden
+    namespace: poseidon
       simulation-core (multi-replica for sweeps)
       scenario-engine
       evaluation
