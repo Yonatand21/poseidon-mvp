@@ -1,0 +1,93 @@
+---
+# POSEIDON MVP - Profile A (Dev / Demo) dev workstation stack.
+#
+# Reference: INFRASTRUCTURE_DESIGN.md Section 4.1 (Dev workstation - Docker
+# Compose) and Section 3.1 (Image families).
+#
+# Services below are placeholders using busybox:1.36 so `docker compose
+# config --quiet` validates and CI stays green. Real images land as each
+# component is built. Images will eventually be:
+#
+#   poseidon-sim         -> Stonefish + physics + sensor plugins (Layer 1)
+#   poseidon-nav         -> robot_localization + nav stacks (Layer 2)
+#   poseidon-autonomy    -> classical autonomy (Layer 2)
+#   poseidon-scenario-engine -> orchestrator
+#   poseidon-eval        -> metrics + report generation (Layer 4 classical)
+#   poseidon-ai-runtime  -> Layer 3 inference (optional)
+#   poseidon-eval-ai     -> Layer 4 LLM summarization (optional)
+#   poseidon-unreal      -> UE5 rendering (Profile A only)
+#   poseidon-dashboard   -> web UI (optional)
+#
+# Compose profiles:
+#   default: scenario engine + sim + nav + autonomy + eval (mission-essential core)
+#   ai:      adds ai-runtime and eval-ai
+#   viz:     adds unreal and dashboard
+#   obs:     adds observability stack
+
+name: poseidon-mvp
+
+services:
+  scenario-engine:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'scenario-engine placeholder' && sleep infinity"]
+    profiles: [core]
+
+  sim:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'sim (Stonefish) placeholder' && sleep infinity"]
+    profiles: [core]
+
+  nav-auv:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'nav-auv placeholder' && sleep infinity"]
+    profiles: [core]
+
+  nav-ssv:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'nav-ssv placeholder' && sleep infinity"]
+    profiles: [core]
+
+  autonomy-auv:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'autonomy-auv placeholder' && sleep infinity"]
+    profiles: [core]
+
+  autonomy-ssv:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'autonomy-ssv placeholder' && sleep infinity"]
+    profiles: [core]
+
+  mcap-recorder:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'mcap-recorder placeholder' && sleep infinity"]
+    profiles: [core]
+
+  eval:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'eval placeholder' && sleep infinity"]
+    profiles: [core]
+
+  ai-runtime:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'ai-runtime (Layer 3) placeholder' && sleep infinity"]
+    profiles: [ai]
+
+  eval-ai:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'eval-ai (Layer 4 LLM) placeholder' && sleep infinity"]
+    profiles: [ai]
+
+  unreal:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'unreal placeholder' && sleep infinity"]
+    profiles: [viz]
+
+  foxglove:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'foxglove placeholder' && sleep infinity"]
+    profiles: [viz]
+
+  dashboard:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'dashboard placeholder' && sleep infinity"]
+    profiles: [viz]

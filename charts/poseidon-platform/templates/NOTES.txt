@@ -1,0 +1,11 @@
+POSEIDON MVP umbrella chart installed.
+
+Profile:    {{ .Values.global.profile }}
+AI mode:    {{ .Values.global.aiMode }}
+
+All subcharts currently ship at version 0.0.0 with no templates. Real
+Kubernetes manifests land per component when that component's first image
+ships. Until then this install is a no-op deployment intended for chart
+linting and structural validation only.
+
+Reference: INFRASTRUCTURE_DESIGN.md Section 4 (Orchestration).

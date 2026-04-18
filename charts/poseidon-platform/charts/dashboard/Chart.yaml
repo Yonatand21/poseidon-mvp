@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: dashboard
+description: Web dashboard for run management, metrics browsing, MCAP links. Mission-enhancing.
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

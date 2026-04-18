@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: rendering
+description: Unreal Engine 5 headless renderer and ROS 2 bridge. Mission-enhancing, Profile A only.
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

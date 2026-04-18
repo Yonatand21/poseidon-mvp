@@ -1,0 +1,20 @@
+---
+# Profile B - partner on-prem appliance (k3s, air-gap capable).
+# INFRASTRUCTURE_DESIGN.md Section 4.2, Section 16.2.
+
+global:
+  profile: B
+  aiMode: off
+  imagePullPolicy: Never   # air-gap: preloaded images only
+
+rendering:
+  enabled: false           # Unreal disabled at edge by default
+
+dashboard:
+  enabled: false
+
+gateway:
+  enabled: false
+
+observability:
+  enabled: true            # local Prometheus / Loki; no external export

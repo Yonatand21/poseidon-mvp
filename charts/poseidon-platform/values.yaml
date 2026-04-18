@@ -1,0 +1,31 @@
+---
+# POSEIDON MVP umbrella chart default values.
+# Override via values-dev.yaml, values-onprem.yaml, values-multitenant.yaml.
+
+global:
+  profile: A               # A (dev/demo) | B (edge/mission)
+  imageRegistry: ""        # empty = use per-component default
+  imagePullPolicy: IfNotPresent
+  aiMode: off              # on | off | shadow
+  rosDomainId: 42
+
+simulation-core:
+  enabled: true
+
+scenario-engine:
+  enabled: true
+
+evaluation:
+  enabled: true
+
+rendering:
+  enabled: false           # Profile A only; Profile B keeps this off
+
+dashboard:
+  enabled: false
+
+gateway:
+  enabled: false           # multi-tenant only
+
+observability:
+  enabled: false

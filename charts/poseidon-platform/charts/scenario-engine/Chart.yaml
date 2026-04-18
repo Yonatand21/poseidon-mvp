@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: scenario-engine
+description: Scenario orchestrator - YAML validation, ROS 2 graph launch, mission phase ticks.
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

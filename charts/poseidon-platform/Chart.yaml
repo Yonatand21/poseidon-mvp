@@ -1,0 +1,43 @@
+---
+apiVersion: v2
+name: poseidon-platform
+description: POSEIDON MVP umbrella chart. Deploys the full platform to k3s or upstream Kubernetes.
+type: application
+version: 0.0.0
+appVersion: "0.0.0"
+kubeVersion: ">=1.27.0-0"
+home: https://github.com/poseidon-mvp/poseidon-mvp
+sources:
+  - https://github.com/poseidon-mvp/poseidon-mvp
+maintainers:
+  - name: POSEIDON MVP contributors
+keywords:
+  - auv
+  - ssv
+  - maritime
+  - simulation
+  - test-and-evaluation
+  - ros2
+# Subcharts live in-tree under ./charts/ and are declared below so
+# `helm lint` recognizes them. No repository field needed for in-tree
+# charts. Conditions wire to values.yaml flags.
+# Mirrors INFRASTRUCTURE_DESIGN.md Section 4.4.
+dependencies:
+  - name: simulation-core
+    version: 0.0.0
+  - name: scenario-engine
+    version: 0.0.0
+  - name: evaluation
+    version: 0.0.0
+  - name: rendering
+    version: 0.0.0
+    condition: rendering.enabled
+  - name: dashboard
+    version: 0.0.0
+    condition: dashboard.enabled
+  - name: gateway
+    version: 0.0.0
+    condition: gateway.enabled
+  - name: observability
+    version: 0.0.0
+    condition: observability.enabled

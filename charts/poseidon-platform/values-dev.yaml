@@ -1,0 +1,16 @@
+---
+# Profile A - dev workstation via k3s (or engineer's laptop).
+# Mirrors the Docker Compose stack but through Helm for parity testing.
+
+global:
+  profile: A
+  aiMode: shadow
+
+rendering:
+  enabled: true
+
+dashboard:
+  enabled: true
+
+observability:
+  enabled: false

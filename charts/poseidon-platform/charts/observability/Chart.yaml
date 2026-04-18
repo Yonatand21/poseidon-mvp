@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: observability
+description: Prometheus, Grafana, Loki, OpenTelemetry Collector. Mission-enhancing.
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

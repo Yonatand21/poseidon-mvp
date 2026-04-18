@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: evaluation
+description: Metrics pipeline, report generation, MCAP storage. Layer 4 classical + optional LLM summarizer.
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

@@ -1,0 +1,19 @@
+---
+# Multi-tenant Kubernetes deployment.
+# INFRASTRUCTURE_DESIGN.md Section 4.3, Section 12 (Multi-tenancy).
+
+global:
+  profile: A               # per-tenant override possible via per-namespace values
+  aiMode: off
+
+rendering:
+  enabled: false           # analyst replay is a separate deploy
+
+dashboard:
+  enabled: true
+
+gateway:
+  enabled: true            # API gateway / auth front-door required
+
+observability:
+  enabled: true
