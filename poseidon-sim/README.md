@@ -30,4 +30,3 @@ See `AGENTS.md`:
 - Federation bridge semantics are owned by `coupling/**`.
 - Dual-runtime ownership is fixed: DAVE owns AUV truth, VRX owns SSV truth.
 - Ground-truth topics are not valid control-loop inputs.
-

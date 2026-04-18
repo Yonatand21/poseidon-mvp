@@ -27,4 +27,3 @@ For fixed scenario + seed + ai mode, the run should be reproducible.
 
 - `src/run_scenario_mvp.py` publishes one seed-locked drop event and writes
   run metadata to `/recordings/run_metadata.json`.
-

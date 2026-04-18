@@ -9,7 +9,7 @@ Section 14 (Unreal visual layer).
 
 ## Per-archetype layout
 
-```
+```text
 Content/Archetypes/<archetype>/
   Heightmap.png            exported from world_generator (Git LFS)
   Bathymetry_M.uasset      UE5 landscape material

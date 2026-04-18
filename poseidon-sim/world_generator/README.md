@@ -19,4 +19,3 @@ Outputs are projected to all runtime consumers:
 ## Determinism
 
 Same archetype + params + seed must produce identical output artifacts.
-

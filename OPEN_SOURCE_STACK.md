@@ -61,4 +61,3 @@ Companion to `SYSTEM_DESIGN.md`. This document captures the dependency strategy 
 Primary mission runtime dependencies are permissive (Apache-2.0 / MIT / BSD). Any GPL/LGPL usage remains process-isolated where applicable.
 
 Release rule: every imported upstream dependency must include pinned revision and license metadata in release artifacts.
-

@@ -18,7 +18,19 @@
 # INFRASTRUCTURE_DESIGN.md Section 2.3 (GPU and compute).
 
 services:
-  sim:
+  sim-auv:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,graphics,utility"
+
+  sim-ssv:
     deploy:
       resources:
         reservations:
@@ -42,7 +54,7 @@ services:
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
 
-  unreal-bridge:
+  unav-sim-render:
     deploy:
       resources:
         reservations:

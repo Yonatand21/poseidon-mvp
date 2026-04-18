@@ -18,4 +18,3 @@ Rendering is consumer-only. It never owns actuator authority or safety logic.
 - No simulation truth ownership.
 - No control-loop authority.
 - No mission orchestration.
-

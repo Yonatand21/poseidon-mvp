@@ -14,4 +14,3 @@ This package is not a physics simulator and is not used for determinism validati
 - `/auv/state`
 - `/ssv/state`
 - `/env/wave_state`
-

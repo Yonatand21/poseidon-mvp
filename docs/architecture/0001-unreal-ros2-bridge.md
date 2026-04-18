@@ -51,11 +51,13 @@ Mature Unreal plugin wrapping `rclcpp`. Used by Open-RMF. C++. Supports
 publishers, subscribers, services, actions.
 
 Pros:
+
 - First-class ROS 2 performance; direct DDS link, 60+ Hz TF feasible.
 - One codebase for all message types via ROS 2 IDL codegen.
 - Well-documented, actively maintained.
 
 Cons:
+
 - Must be rebuilt per UE version (5.4, 5.5, ...).
 - Brings `rclcpp` + DDS into the UE process - adds ~50 MB of libs and
   increases UE cook time.
@@ -77,10 +79,12 @@ ROS 2 integration. Since we are already adopting UNav-Sim for underwater
 visuals, we could reuse its bridge.
 
 Pros:
+
 - Zero incremental adoption cost if we are already pulling UNav-Sim in.
 - Purpose-built for underwater vehicle topics.
 
 Cons:
+
 - Couples our bridge lifecycle to UNav-Sim releases.
 - UNav-Sim's bridge design (at time of this ADR) is closely tied to its
   own vehicle abstraction; using it for our `/auv/state` and `/ssv/state`
@@ -99,6 +103,7 @@ client. No UE plugin to build; UE uses the built-in `FWebSocketsModule`
 plus `FJsonObject`.
 
 Pros:
+
 - No UE plugin build, no DDS inside UE, no platform-specific binaries.
   Runs identically on macOS ARM64, Linux amd64, and Windows.
 - Bridge is a ROS 2 node on the server side - same deploy/debug model as
@@ -115,6 +120,7 @@ Pros:
   client.
 
 Cons:
+
 - JSON + WebSocket has higher per-message overhead than direct DDS.
   Benchmarks elsewhere show ~1000-2000 Hz throughput ceiling; we need
   60 Hz, well inside the ceiling but with higher per-message CPU than

@@ -30,7 +30,7 @@ Canonical terminology used across docs:
 
 ## Repository layout
 
-```
+```text
 poseidon-mvp/
   README.md
   SYSTEM_DESIGN.md

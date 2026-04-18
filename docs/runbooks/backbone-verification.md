@@ -57,11 +57,11 @@ What it does (exits non-zero on any failure, logs to `.verify-t1.log`):
    publishing with `ros2 topic hz`.
 6. Brings up the `core` compose profile with local-tag images.
 7. Confirms `/auv/state`, `/ssv/state`, and `/scenario/clock` appear.
-7. Tears down unless `--keep` is passed.
+8. Tears down unless `--keep` is passed.
 
 ### Expected output
 
-```
+```text
 [PASS] docker daemon reachable
 [PASS] poseidon-base-dev image present as poseidon-base-dev:verify-t1
 [PASS] ros2 --help runs

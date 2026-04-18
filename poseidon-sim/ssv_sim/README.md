@@ -19,4 +19,3 @@ Responsibilities:
 ## Subdirs
 
 - `src/` - ROS 2 launch/adapters and runtime wrappers.
-

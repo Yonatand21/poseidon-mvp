@@ -4,7 +4,7 @@ Profile A dev-workstation stack per `INFRASTRUCTURE_DESIGN.md` Section 4.1.
 
 ## Quickstart
 
-```
+```text
 cp .env.example .env
 docker compose --profile core config --quiet
 docker compose --profile core up

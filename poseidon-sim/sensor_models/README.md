@@ -23,4 +23,3 @@ Runtime source may be DAVE or VRX plugins, but published topic contracts are sta
 - Explicit frame IDs.
 - Validity/dropout flags where applicable.
 - Environment-coupled degradation hooks (`gnss_env`, `acoustic_env`, `env_service`).
-

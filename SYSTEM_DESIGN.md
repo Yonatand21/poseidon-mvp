@@ -29,7 +29,7 @@ Deliver repeatable virtual trials for maritime missions where:
 
 ## 3. Top-level architecture
 
-```
+```text
 ROS 2 Mission Graph (Jazzy)
   ├─ Gazebo runtime A (DAVE): AUV physics + AUV sensors
   ├─ Gazebo runtime B (VRX):  SSV physics + SSV sensors
@@ -290,4 +290,3 @@ Mitigations: pin revisions, deterministic scheduler, CI integration gates, maint
 1. Final ownership split of federation bridge implementation (C++ core vs Python orchestration).
 2. Canonical source of truth for shared ocean forcing when DAVE and VRX models diverge.
 3. Long-term strategy: remain federated or converge to unified runtime.
-

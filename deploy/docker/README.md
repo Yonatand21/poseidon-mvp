@@ -4,7 +4,7 @@ Base image Dockerfiles per `INFRASTRUCTURE_DESIGN.md` Section 3.1.
 
 ## Image family
 
-```
+```text
 poseidon-base-dev          -> Ubuntu 24.04 + ROS 2 Jazzy (Profile A)
 poseidon-base-edge         -> Ubuntu 22.04 + ROS 2 Humble (Profile B baseline)
 poseidon-base-edge-rhel    -> Rocky 9 + ROS 2 Humble/Jazzy (Profile B, RHEL family)

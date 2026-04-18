@@ -75,11 +75,13 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v3
         with:
-          version: "0.4.30"
+          version: "0.5.24"
       - name: Set up Python
         run: uv python install 3.11
       - name: Verify lockfile is current
-        run: uv lock --check
+        run: |
+          uv lock
+          git diff --exit-code uv.lock
 
   layer-permissions:
     name: layer permission lint

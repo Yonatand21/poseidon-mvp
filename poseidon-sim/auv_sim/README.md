@@ -20,4 +20,3 @@ Responsibilities:
 
 - `src/` - ROS 2 launch/adapters and runtime wrappers.
 - `plugins/` - runtime-specific extensions where upstream plugins are insufficient.
-

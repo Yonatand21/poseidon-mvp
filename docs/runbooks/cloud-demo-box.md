@@ -35,7 +35,7 @@ Rule of thumb: **if the task runs Stonefish or uses a GPU, use the cloud box.**
 - Hourly price (as of provisioning date): ~$0.60/hr on-demand.
 - Persistent storage: 200 GB block volume attached to the instance,
   persists when the instance is stopped.
-- Console: https://lambdalabs.com/cloud
+- Console: <https://lambdalabs.com/cloud>
 
 Why Lambda: pre-baked NVIDIA drivers + CUDA + Docker, no GPU quota
 approval needed, simple billing.

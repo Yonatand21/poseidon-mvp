@@ -27,7 +27,7 @@ generator.
 
 Place the file at:
 
-```
+```text
 poseidon-sim/rendering/unreal/PoseidonUE/Content/Archetypes/ChokePoint/Heightmap.png
 ```
 

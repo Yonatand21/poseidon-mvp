@@ -52,7 +52,7 @@ Mission-enhancing services:
 
 ### 3.1 Image families
 
-```
+```text
 poseidon-base-jazzy
   |- poseidon-sim-auv      (Gazebo + DAVE)
   |- poseidon-sim-ssv      (Gazebo + VRX)
@@ -259,4 +259,3 @@ This kit must run mission-essential dual-runtime simulation without internet con
 
 - `SYSTEM_DESIGN.md` for architecture and layer contracts.
 - `OPEN_SOURCE_STACK.md` for dependency rationale.
-

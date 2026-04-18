@@ -20,4 +20,3 @@ helm install poseidon charts/poseidon-platform -f charts/poseidon-platform/value
 | `dashboard` | optional | Web UI and run browsing. |
 | `gateway` | optional | API/auth front door for managed deployments. |
 | `observability` | optional | Prometheus/Grafana/Loki stack. |
-

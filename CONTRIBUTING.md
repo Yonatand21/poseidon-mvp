@@ -8,7 +8,7 @@
 
 ## Development environment
 
-```
+```bash
 git clone <repo>
 cd poseidon-mvp
 uv sync                      # Python environment
@@ -27,7 +27,7 @@ helm lint charts/poseidon-platform
 
 Follow Conventional Commits where practical:
 
-```
+```bash
 feat(scenario_engine): add YAML schema for acoustic_nav
 fix(auv_nav): clamp DVL innovation gate on water-lock transition
 docs(system_design): clarify nav cascade diagram

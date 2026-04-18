@@ -125,4 +125,3 @@ Mission-essential core must run without Unreal, without Layer 3 AI, and without 
 - `SYSTEM_DESIGN.md`
 - `INFRASTRUCTURE_DESIGN.md`
 - `OPEN_SOURCE_STACK.md`
-

@@ -22,7 +22,7 @@ Section 5.2 (Model registry).
 
 Examples:
 
-```
+```text
 models/perception/yolo_v8_surface_contacts_v3.onnx
 models/perception/yolo_v8_surface_contacts_v3.sha256
 models/anomaly/gnss_spoof_rf_v1.joblib

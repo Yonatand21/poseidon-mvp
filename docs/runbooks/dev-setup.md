@@ -44,14 +44,14 @@ flowchart TD
 
 These are GUI installers, not handled by the script:
 
-1. **Docker Desktop for Mac** - https://docs.docker.com/desktop/install/mac-install/
+1. **Docker Desktop for Mac** - <https://docs.docker.com/desktop/install/mac-install/>
    Open the app once, accept the license, and bump resources under
    `Settings > Resources`:
    - CPUs: at least 8
    - Memory: at least 12 GB
    - Disk image size: at least 80 GB (MCAP recordings get big)
 2. **Unreal Engine 5.4** (only if you work on rendering) -
-   https://www.unrealengine.com/en-US/download via Epic Games Launcher.
+   <https://www.unrealengine.com/en-US/download> via Epic Games Launcher.
 
 ### Run the script
 
@@ -109,18 +109,20 @@ Microsoft and Docker both treat as first-class.
 ### One-time setup (in Windows host, PowerShell as admin)
 
 1. **Enable WSL2 and install Ubuntu 22.04:**
+
    ```powershell
    wsl --install -d Ubuntu-22.04
    ```
+
    Reboot when prompted. On first launch, set a UNIX username and password.
 2. **Install Docker Desktop for Windows** -
-   https://docs.docker.com/desktop/install/windows-install/
+   <https://docs.docker.com/desktop/install/windows-install/>
    During install select "Use WSL 2 instead of Hyper-V" and, after install,
    open `Settings > Resources > WSL Integration` and enable integration for
    your Ubuntu-22.04 distro.
 3. **Install Windows Terminal** (optional but recommended) from the
    Microsoft Store. Set Ubuntu-22.04 as the default profile.
-4. **Install VS Code** - https://code.visualstudio.com/ - plus the
+4. **Install VS Code** - <https://code.visualstudio.com/> - plus the
    `Remote - WSL` extension. Open the repo with `code .` from inside WSL.
 
 ### Then inside WSL2 Ubuntu
@@ -149,7 +151,7 @@ daemon via its WSL integration.
   path. Bind-mount speed is day and night.
 - **GPU passthrough.** WSL2 CUDA works on Windows 11 with recent NVIDIA
   drivers, but this is separate from the shared cloud box. See
-  https://docs.nvidia.com/cuda/wsl-user-guide/ if you have a local NVIDIA
+  <https://docs.nvidia.com/cuda/wsl-user-guide/> if you have a local NVIDIA
   GPU.
 
 ---

@@ -19,4 +19,3 @@ Read-only ROS 2 to Unreal bridge used by UNav-Sim primary / PoseidonUE fallback.
 - `/federation/sync_state`
 
 Actuator topics are intentionally excluded.
-

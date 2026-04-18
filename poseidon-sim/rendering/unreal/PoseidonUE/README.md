@@ -28,7 +28,7 @@ opens are under 30 seconds.
 
 ## Directory layout (committed)
 
-```
+```text
 PoseidonUE/
   PoseidonUE.uproject
   .gitignore
@@ -51,7 +51,7 @@ PoseidonUE/
 
 UE5 generates the following on first open. They are all in `.gitignore`:
 
-```
+```text
 Binaries/             compiled C++
 Build/                per-platform build artifacts
 DerivedDataCache/     shader / asset cache (can be many GB)
