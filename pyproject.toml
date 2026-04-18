@@ -11,7 +11,11 @@ authors = [
 dependencies = []
 
 [project.optional-dependencies]
-dev = []
+# Dev-only tools (test runner, future linters) kept separate from the
+# runtime extras so edge / Profile B installs never pull them.
+dev = [
+    "pytest>=8.0",
+]
 # Offline MCAP analysis (Tier-2 evaluation + contract-check CLI).
 # Kept in an optional extra so mission-essential core has no pip deps
 # (AGENTS.md Section 3, Profile B).

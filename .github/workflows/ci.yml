@@ -106,8 +106,8 @@ jobs:
           version: "0.5.24"
       - name: Set up Python
         run: uv python install 3.11
-      - name: Sync eval extras
-        run: uv sync --extra eval
+      - name: Sync eval + dev extras
+        run: uv sync --extra eval --extra dev
       - name: Run metrics unit tests
         run: uv run pytest tests/unit/test_metrics_registry.py -v
       - name: Import smoke (registry loads without fixture)
