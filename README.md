@@ -72,38 +72,39 @@ poseidon-mvp/
 
 ## Quickstart
 
-Prerequisites (host):
-
-- Docker 24+ with Compose plugin
-- NVIDIA drivers + NVIDIA Container Toolkit (for Profile A Unreal + AI; optional for core)
-- `uv` for Python: <https://docs.astral.sh/uv/>
-- `helm` 3.14+ (optional, for Helm lint and k3s deployment)
-- `git-lfs` (required if you will touch `vehicles/` or `models/`)
-
-Bring the stack up:
+Dev environment is cross-platform. Host tooling differs by OS; the runtime
+is always Ubuntu inside Docker. Full walkthrough for Mac / Linux / Windows
+(WSL2) in [`docs/runbooks/dev-setup.md`](./docs/runbooks/dev-setup.md).
 
 ```bash
-git clone <repo>
+git clone <repo-url> poseidon-mvp
 cd poseidon-mvp
 
-# Python env (zero deps for now; verifies lock is current)
-uv sync
+# One-shot, idempotent toolchain installer. Pick the one matching your host:
+bash tools/setup-mac.sh       # macOS (Apple Silicon or Intel)
+bash tools/setup-linux.sh     # Ubuntu / Debian / Fedora / RHEL / WSL2 Ubuntu
 
-# Pre-commit hooks
-uv tool install pre-commit
-pre-commit install
-
-# Validate the infrastructure scaffolding
+# Validate the repo is healthy (the setup scripts run these automatically).
 helm lint charts/poseidon-platform
 docker compose -f deploy/compose/docker-compose.yml config --quiet
+uv lock --check
 
-# Bring up the dev stack (placeholder services until components land)
-cd deploy/compose
-cp .env.example .env
-docker compose --profile core up
+# Bring up the dev stack (busybox placeholders until components land).
+docker compose -f deploy/compose/docker-compose.yml --profile core up
 ```
 
-Target: new engineer runs the hero scenario within 30 minutes of cloning, per `SYSTEM_DESIGN.md` Section 18.2.1.
+Prerequisites you install manually before the script:
+
+- **Docker Desktop** (Mac / Windows) or **Docker Engine** will be installed
+  by the Linux script.
+- **Unreal Engine 5.4** (only if you work on the rendering track): Epic
+  Games Launcher, <https://www.unrealengine.com/en-US/download>.
+- **Windows users:** install Docker Desktop with WSL2 backend, enable WSL2
+  integration for an Ubuntu-22.04 distro, then run `tools/setup-linux.sh`
+  from inside WSL2. See the runbook Windows section.
+
+Target: new engineer runs the hero scenario within 30 minutes of cloning,
+per `SYSTEM_DESIGN.md` Section 18.2.1.
 
 ---
 
