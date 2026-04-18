@@ -23,3 +23,8 @@ For fixed scenario + seed + ai mode, the run should be reproducible.
 - Pydantic for schema validation.
 - pytest/hypothesis for determinism tests.
 
+## MVP entrypoint
+
+- `src/run_scenario_mvp.py` publishes one seed-locked drop event and writes
+  run metadata to `/recordings/run_metadata.json`.
+

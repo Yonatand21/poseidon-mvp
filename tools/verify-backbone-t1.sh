@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # verify-backbone-t1.sh
 #
-# Tier 1 verification for the POSEIDON MVP backbone work.
+# Tier 1 verification for the federated POSEIDON MVP backbone.
 #
 # Runs on any host with Docker available (primary target: Mac M4, but
 # also works on Linux). Builds poseidon-base-dev for the host arch,
 # smoke-tests it, colcon-builds the mock sim package inside, brings
-# the `core` compose profile up, and verifies /auv/state is publishing.
+# the `core` compose profile up, and verifies /auv/state, /ssv/state,
+# and /scenario/clock are publishing.
 #
-# Does NOT build poseidon-sim (that pulls Stonefish and takes 30-45
-# minutes; defer to Tier 3 on Linux+GPU).
+# Does NOT build poseidon-sim runtime images. Uses base-dev plus mounted
+# source for federated mock runtime bring-up.
 #
 # Usage:
 #   bash tools/verify-backbone-t1.sh            # full run, logs to .verify-t1.log
@@ -152,13 +153,12 @@ docker run --rm --platform "$DOCKER_PLATFORM" \
     " 2>&1 | tee -a "$LOG_FILE" | tail -10 || fail "mock sim did not publish /auv/state"
 pass "mock sim publishes /auv/state"
 
-# ---- step 5: docker compose up with local images, verify sim publishes /auv/state ----
+# ---- step 5: docker compose up with local images, verify federated topics ----
 # T1 aliases the base-dev image under the names the compose file
 # references so compose uses local images instead of trying GHCR.
 # POSEIDON_PULL_POLICY=never stops compose from attempting a pull.
 info "aliasing local base image to names compose references"
 docker tag "$BASE_TAG" ghcr.io/yonatand21/poseidon-mvp/poseidon-base-dev:dev
-docker tag "$BASE_TAG" ghcr.io/yonatand21/poseidon-mvp/poseidon-sim:dev
 
 info "bringing up core compose profile with local images"
 export POSEIDON_PULL_POLICY=never
@@ -166,29 +166,48 @@ COMPOSE="docker compose -f deploy/compose/docker-compose.yml"
 
 $COMPOSE --profile core up -d --no-build >> "$LOG_FILE" 2>&1 || fail "compose up failed (see $LOG_FILE)"
 
-info "waiting up to 30s for sim service to start publishing /auv/state"
-PUBLISHING=0
+info "waiting up to 30s for federated services to publish key topics"
+PUBLISHING_AUV=0
+PUBLISHING_SSV=0
+PUBLISHING_SCENARIO_CLOCK=0
 for i in 1 2 3 4 5 6; do
     sleep 5
-    if $COMPOSE exec -T sim bash -lc "
+    if $COMPOSE exec -T sim-auv bash -lc "
         source /opt/ros/jazzy/setup.bash 2>/dev/null
-        [[ -f /workspace/ws/install/setup.bash ]] && source /workspace/ws/install/setup.bash 2>/dev/null
         timeout 2 ros2 topic list 2>/dev/null | grep -q '^/auv/state$'
     " >> "$LOG_FILE" 2>&1; then
-        PUBLISHING=1
-        info "sim publishing /auv/state after ${i}x5s"
+        PUBLISHING_AUV=1
+    fi
+    if $COMPOSE exec -T sim-ssv bash -lc "
+        source /opt/ros/jazzy/setup.bash 2>/dev/null
+        timeout 2 ros2 topic list 2>/dev/null | grep -q '^/ssv/state$'
+    " >> "$LOG_FILE" 2>&1; then
+        PUBLISHING_SSV=1
+    fi
+    if $COMPOSE exec -T federation-bridge bash -lc "
+        source /opt/ros/jazzy/setup.bash 2>/dev/null
+        timeout 2 ros2 topic list 2>/dev/null | grep -q '^/scenario/clock$'
+    " >> "$LOG_FILE" 2>&1; then
+        PUBLISHING_SCENARIO_CLOCK=1
+    fi
+    if [[ "$PUBLISHING_AUV" -eq 1 && "$PUBLISHING_SSV" -eq 1 && "$PUBLISHING_SCENARIO_CLOCK" -eq 1 ]]; then
+        info "federated topics active after ${i}x5s"
         break
     fi
-    info "attempt $i: /auv/state not yet on the bus"
+    info "attempt $i: topic readiness auv=$PUBLISHING_AUV ssv=$PUBLISHING_SSV scenario_clock=$PUBLISHING_SCENARIO_CLOCK"
 done
 
 $COMPOSE ps >> "$LOG_FILE"
-if [[ "$PUBLISHING" -ne 1 ]]; then
-    echo "--- sim logs (tail) ---" >> "$LOG_FILE"
-    $COMPOSE logs sim >> "$LOG_FILE" 2>&1 || true
-    fail "sim service did not publish /auv/state within 30s; see $LOG_FILE"
+if [[ "$PUBLISHING_AUV" -ne 1 || "$PUBLISHING_SSV" -ne 1 || "$PUBLISHING_SCENARIO_CLOCK" -ne 1 ]]; then
+    echo "--- sim-auv logs (tail) ---" >> "$LOG_FILE"
+    $COMPOSE logs sim-auv >> "$LOG_FILE" 2>&1 || true
+    echo "--- sim-ssv logs (tail) ---" >> "$LOG_FILE"
+    $COMPOSE logs sim-ssv >> "$LOG_FILE" 2>&1 || true
+    echo "--- federation-bridge logs (tail) ---" >> "$LOG_FILE"
+    $COMPOSE logs federation-bridge >> "$LOG_FILE" 2>&1 || true
+    fail "federated services did not publish required topics within 30s; see $LOG_FILE"
 fi
-pass "sim service publishes /auv/state via compose"
+pass "federated compose services publish /auv/state, /ssv/state, and /scenario/clock"
 
 printf "\n%s[DONE]%s Tier 1 verification passed.\n" "$GREEN" "$RESET"
 printf "Full log: %s\n" "$LOG_FILE"

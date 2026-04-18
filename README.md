@@ -98,6 +98,29 @@ Documentation and scaffolding are aligned to the federated Gazebo architecture. 
 
 ---
 
+## Federated MVP quick verify
+
+```bash
+docker compose -f deploy/compose/docker-compose.yml --profile core up -d --build
+docker compose -f deploy/compose/docker-compose.yml exec -T sim-auv bash -lc "source /opt/ros/jazzy/setup.bash && ros2 topic list | egrep '^/auv/state$|^/ssv/state$|^/scenario/clock$'"
+bash tools/verify-backbone-t1.sh
+```
+
+Expected core topics:
+
+- `/auv/state`
+- `/ssv/state`
+- `/scenario/clock`
+
+Optional demo visual profile:
+
+```bash
+docker compose -f deploy/compose/docker-compose.yml --profile viz up -d
+docker compose -f deploy/compose/docker-compose.yml ps foxglove unav-sim-render poseidonue-bridge
+```
+
+---
+
 ## Documentation map
 
 Read in this order:

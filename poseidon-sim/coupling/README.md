@@ -1,23 +1,17 @@
 # coupling (Layer 1 / 2)
 
-Carries / drop handoff state machine and the AUV-SSV comms pipe.
+Federation bridge and cross-runtime coupling services.
 
-**Design reference:** `SYSTEM_DESIGN.md` Section 11 (Meshed SSV + AUV with
-drop handoff) and Section 16 (Coupling topics).
+**Design reference:** `SYSTEM_DESIGN.md` Section 10 (Federated mission coupling)
+and Section 14 (Interface contracts).
 
 ## Responsibilities
 
-- Track whether the AUV is carried by the SSV or free.
-- On `/coupling/drop_cmd`, capture SSV pose and velocity, write them as the
-  AUV's initial state, switch the AUV from kinematic to dynamic mode, hand
-  control to AUV autonomy.
-- Publish `/coupling/payload_state`.
-- Model the acoustic + RF comms pipe with range cutoff, fixed latency,
-  range-dependent drop, and depth-gated mode selection. Three configs:
-  `perfect`, `nominal`, `degraded`.
-- Publish `/coupling/comms_link` messages with source, dest, payload,
-  send_time, receive_time, dropped flag.
+- Publish synchronized `/scenario/clock` from `/sim/auv/clock` and `/sim/ssv/clock`.
+- Publish `/federation/runtime_health` and `/federation/sync_state`.
+- Accept `/coupling/drop_cmd` and emit deterministic `/federation/drop_commit`.
+- Serve as the authoritative event-ordering layer between DAVE (AUV) and VRX (SSV).
 
 ## Subdirs
 
-- `src/` - coupling node and comms-pipe node implementations.
+- `src/federation_bridge.py` - MVP bridge implementation.
