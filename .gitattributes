@@ -1,0 +1,35 @@
+# Git LFS tracking for binary CAD, mesh, model, and recording artifacts.
+# Enable LFS server-side in the Git provider (GitHub / GitLab / Gitea) before
+# the first large artifact is committed. The attributes below ensure new
+# binary files are routed through LFS from the first commit that adds them.
+
+# CAD sources
+vehicles/**/*.step filter=lfs diff=lfs merge=lfs -text
+vehicles/**/*.STEP filter=lfs diff=lfs merge=lfs -text
+vehicles/**/*.stp  filter=lfs diff=lfs merge=lfs -text
+
+# Visual / collision / hydrodynamic meshes
+vehicles/**/*.gltf filter=lfs diff=lfs merge=lfs -text
+vehicles/**/*.glb  filter=lfs diff=lfs merge=lfs -text
+vehicles/**/*.obj  filter=lfs diff=lfs merge=lfs -text
+vehicles/**/*.fbx  filter=lfs diff=lfs merge=lfs -text
+vehicles/**/*.dae  filter=lfs diff=lfs merge=lfs -text
+
+# World-generator heightfield outputs
+poseidon-sim/world_generator/output/**/*.png filter=lfs diff=lfs merge=lfs -text
+poseidon-sim/world_generator/output/**/*.tif filter=lfs diff=lfs merge=lfs -text
+poseidon-sim/world_generator/output/**/*.raw filter=lfs diff=lfs merge=lfs -text
+
+# AI model artifacts
+models/**/*.onnx    filter=lfs diff=lfs merge=lfs -text
+models/**/*.pt      filter=lfs diff=lfs merge=lfs -text
+models/**/*.pth     filter=lfs diff=lfs merge=lfs -text
+models/**/*.joblib  filter=lfs diff=lfs merge=lfs -text
+models/**/*.pkl     filter=lfs diff=lfs merge=lfs -text
+models/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+
+# MCAP telemetry recordings (canonical demo runs archived in repo)
+**/*.mcap filter=lfs diff=lfs merge=lfs -text
+
+# Normalize text line endings
+* text=auto eol=lf

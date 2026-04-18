@@ -1,0 +1,41 @@
+# POSEIDON MVP - Code owners
+#
+# Domain ownership per SYSTEM_DESIGN.md Section 18.1. Usernames below are
+# placeholder tokens matching first names; replace with real GitHub handles
+# before enabling branch protection that requires CODEOWNER review.
+# NOTE: The placeholders are just that, placeholders work will overlap names are just there to help you find the right person.
+
+
+# Layer 1 - physics and environment
+/poseidon-sim/env_service/          @john
+/poseidon-sim/world_generator/      @robbie
+/poseidon-sim/auv_sim/              @john @robert
+/poseidon-sim/ssv_sim/              @john @robert
+/poseidon-sim/coupling/             @robert
+/poseidon-sim/sensor_models/        @robert
+
+# Layer 2 - classical navigation, autonomy, safety
+/poseidon-sim/nav/                  @robert
+/poseidon-sim/autonomy_auv/         @robert
+/poseidon-sim/autonomy_ssv/         @robert
+
+# Layer 3 - AI augmentation
+/poseidon-sim/ai/                   @robbie @yonatan
+
+# Scenario engine and evaluation (Layer 4)
+/poseidon-sim/scenario_engine/      @robbie @yonatan
+/poseidon-sim/evaluation/           @robbie
+
+# Rendering and Unreal bridge
+/poseidon-sim/rendering/            @yonatan
+
+# CAD artifacts
+/vehicles/                          @robert
+
+# Infrastructure and deployment
+/charts/                            @yonatan
+/deploy/                            @yonatan
+/.github/                           @yonatan
+
+# Documentation
+*.md                                @robbie
