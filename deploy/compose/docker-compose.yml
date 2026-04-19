@@ -39,6 +39,11 @@ services:
   sim-auv:
     image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-base-dev:${POSEIDON_IMAGE_TAG:-dev}
     pull_policy: ${POSEIDON_PULL_POLICY:-missing}
+    # Day 2 planned DAVE image path:
+    # image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-sim-auv-dave:${POSEIDON_IMAGE_TAG:-dev}
+    # build:
+    #   context: ../..
+    #   dockerfile: deploy/docker/sim-auv-dave.Dockerfile
     build:
       context: ../..
       dockerfile: deploy/docker/base-dev.Dockerfile
@@ -48,6 +53,17 @@ services:
       - ../../poseidon-sim:/workspace/poseidon-sim:ro
     networks: [ros2net]
     profiles: [core, default]
+    # Mac-safe fallback during prep/wiring phase.
+    # Future Linux/NVIDIA DAVE path will replace this command after
+    # sim-auv-dave.Dockerfile and auv_dave.launch.py are fully wired.
+    #
+    # Planned shape:
+    # command: >
+    #   bash -lc "source /opt/ros/jazzy/setup.bash &&
+    #   ros2 launch /workspace/poseidon-sim/auv_sim/launch/auv_dave.launch.py
+    #   use_mock_backend:=false
+    #   world_name:=dave_ocean_waves.world
+    #   vehicle_name:=rexrov"
     command: >
       bash -lc "source /opt/ros/jazzy/setup.bash &&
       python3 /workspace/poseidon-sim/auv_sim/src/mock_auv_runtime.py"
