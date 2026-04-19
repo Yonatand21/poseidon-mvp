@@ -60,17 +60,16 @@ services:
       dockerfile: deploy/docker/sim-ssv-vrx.Dockerfile
     environment:
       <<: *common-env
+    # Read-only bind: poseidon_ssv_sim is now baked into the image at
+    # build time per AGENTS.md Section 3 (Profile B). The mount stays
+    # for live-edit dev workflows that override `command:` to
+    # rebuild-and-launch from /workspace.
     volumes:
-      - ../../poseidon-sim:/workspace/poseidon-sim
+      - ../../poseidon-sim:/workspace/poseidon-sim:ro
     networks: [ros2net]
     profiles: [core, default]
-    command: >
-      bash -lc "source /opt/ros/jazzy/setup.bash &&
-      source /opt/vrx_ws/install/setup.bash &&
-      cd /workspace/poseidon-sim &&
-      colcon build --packages-select poseidon_ssv_sim &&
-      source install/setup.bash &&
-      ros2 launch poseidon_ssv_sim ssv_vrx.launch.py"
+    # No command override: the image's CMD launches ssv_vrx.launch.py
+    # with seed:=${POSEIDON_SCENARIO_SEED:-42}.
 
   env-service:
     image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-base-dev:${POSEIDON_IMAGE_TAG:-dev}
