@@ -5,19 +5,21 @@ Contract: SYSTEM_DESIGN.md Section 14.
 
 Current stage:
 - launches stock VRX competition world headless
-- bridges Gazebo dynamic-pose stream into /ssv/world_pose_raw
-- adapter consumes that and publishes /ssv/state (nav_msgs/Odometry, 50 Hz)
+- adapter (ssv_state_adapter) subscribes directly to Gazebo's world
+  dynamic-pose stream via gz.transport13 and publishes /ssv/state
+  (nav_msgs/Odometry)
 - republishes /sim/ssv/clock and /sim/ssv/health via shim
 - remaps first-pass VRX sensor topics into /ssv/sensors/*
 
-World-pose source (from cloud-box validation):
+World-pose source (from cloud-box validation in PR #7 + PR #8):
 - VRX's /wamv/pose only contains sensor mount transforms (camera/lidar
   positions relative to base_link), NOT the world->base_link pose.
 - Gazebo publishes the WAM-V world pose on
   /world/sydney_regatta/dynamic_pose/info as gz.msgs.Pose_V at sim rate.
-- We bridge that to ROS as a tf2_msgs/TFMessage on /ssv/world_pose_raw,
-  then the adapter filters for the entry whose name matches
-  `target_frame` (default "wamv") and converts it to Odometry.
+- ros_gz_bridge's Pose_V -> TFMessage converter silently drops entity
+  names (PR #7's attempt failed at runtime for this reason), so we
+  subscribe directly with gz.transport13 inside the adapter where
+  pose.name is preserved.
 """
 
 from __future__ import annotations
@@ -72,33 +74,18 @@ def generate_launch_description() -> LaunchDescription:
         }.items(),
     )
 
-    # Bridge Gazebo's world dynamic-pose stream into ROS as TFMessage.
-    # This is the canonical source of WAM-V's world pose; VRX does not
-    # bridge this by default in competition.launch.py. The gz topic
-    # publishes Pose_V containing every world entity (buoys, terrain,
-    # WAM-V, etc.); the adapter below filters for `target_frame`.
-    world_pose_bridge = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        name="ssv_world_pose_bridge",
-        output="screen",
-        arguments=[
-            "/world/sydney_regatta/dynamic_pose/info"
-            "@tf2_msgs/msg/TFMessage"
-            "[gz.msgs.Pose_V",
-        ],
-        remappings=[
-            ("/world/sydney_regatta/dynamic_pose/info", "/ssv/world_pose_raw"),
-        ],
-    )
-
+    # No ros_gz_bridge for the dynamic-pose stream: that bridge's
+    # Pose_V -> TFMessage converter silently drops entity names
+    # (cloud-box validation, PR #7 -> PR #8). Instead, the state
+    # adapter subscribes to the gz topic directly via gz.transport13
+    # Python bindings, where pose.name IS populated.
     state_adapter = Node(
         package="poseidon_ssv_sim",
         executable="ssv_state_adapter",
         name="ssv_state_adapter",
         output="screen",
         parameters=[{
-            "input_topic": "/ssv/world_pose_raw",
+            "gz_topic": "/world/sydney_regatta/dynamic_pose/info",
             "output_topic": "/ssv/state",
             "frame_id": "map",
             "child_frame_id": "ssv/base_link",
@@ -172,7 +159,6 @@ def generate_launch_description() -> LaunchDescription:
         declare_seed,
         banner,
         vrx_launch,
-        world_pose_bridge,
         state_adapter,
         contract_shim,
         imu_relay,
