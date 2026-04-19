@@ -22,25 +22,31 @@ LABEL poseidon.vehicle="auv"
 LABEL poseidon.host_requirement="linux-nvidia"
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG DAVE_REPO=https://github.com/Field-Robotics-Lab/dave.git
+ARG DAVE_REF=jazzy
+ARG DAVE_VEHICLE=rexrov
 
 USER root
 
-# TODO(auv): install Gazebo Harmonic via the gazebosim apt repository.
-# Reference: https://gazebosim.org/docs/harmonic/install_ubuntu
-# This should land first in deploy/docker/base-dev.Dockerfile so both
-# sim-auv-dave and sim-ssv-vrx share the layer. Keep this file lean.
+# Gazebo Harmonic is inherited from deploy/docker/base-dev.Dockerfile.
+# Keep this file focused on DAVE-specific build/install steps.
 
 # TODO(auv): clone and colcon-build DAVE for ROS 2 Jazzy + Gazebo Harmonic.
-# Reference: https://github.com/Field-Robotics-Lab/dave (check the ROS 2 port branch).
-# Pin a specific commit SHA so the build is reproducible:
-#   ARG DAVE_REV=<sha>
-#   RUN git clone --depth 1 https://github.com/Field-Robotics-Lab/dave.git /src/dave \
-#       && cd /src/dave && git checkout ${DAVE_REV}
-#   RUN cd /workspace && colcon build --packages-select <dave-packages>
+# Pin the upstream revision before cloud-box builds are enabled.
+# Planned shape:
+# RUN git clone --depth 1 --branch ${DAVE_REF} ${DAVE_REPO} /src/dave
+# RUN cd /src/dave && git rev-parse HEAD
+# RUN mkdir -p /workspace/ws/src && ln -s /src/dave /workspace/ws/src/dave
+# RUN bash -lc "source /opt/ros/jazzy/setup.bash && \
+#     cd /workspace/ws && \
+#     colcon build --merge-install"
 
-# TODO(auv): install at least one stock DAVE AUV model (RexROV or LAUV).
-# Mesh and config files should land under /workspace/poseidon-sim/auv_sim/
-# at runtime via the bind mount in docker-compose.yml.
+# TODO(auv): install one stock DAVE AUV model (RexROV or LAUV).
+# Current placeholder vehicle is controlled by:
+#   ARG DAVE_VEHICLE=rexrov
+
+# TODO(auv): add any DAVE runtime dependencies that are not already covered
+# by the shared base image, but keep this file lean.
 
 USER poseidon
 WORKDIR /workspace

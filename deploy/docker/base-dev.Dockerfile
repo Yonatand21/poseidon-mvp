@@ -96,25 +96,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pytest \
         && rm -rf /var/lib/apt/lists/*
 
-# TODO(shared-runtime): add Gazebo Harmonic here as a shared base layer
-# before enabling real DAVE/VRX runtime images.
-#
-# Prep-phase note:
-# - Do not attempt to complete this on Mac arm64 during design/prep/wiring.
-# - This belongs in a separate small PR, coordinated across AUV and SSV tracks.
-# - sim-auv-dave.Dockerfile and sim-ssv-vrx should inherit the layer from here.
-#
-# Planned shape:
-# RUN curl -fsSL https://packages.osrfoundation.org/gazebo.gpg \
-#         -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
-#     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] \
-#     http://packages.osrfoundation.org/gazebo/ubuntu-stable $(. /etc/os-release && echo ${UBUNTU_CODENAME}) main" \
-#         > /etc/apt/sources.list.d/gazebo-stable.list && \
-#     apt-get update && \
-#     apt-get install -y --no-install-recommends \
-#         gz-harmonic \
-#         ros-${ROS_DISTRO}-ros-gz \
-#         && rm -rf /var/lib/apt/lists/*
+# Gazebo Harmonic shared runtime layer for AUV/SSV simulation images.
+# Day 1 target: land this in the shared base image first so both
+# sim-auv-dave and sim-ssv-vrx inherit the same Gazebo stack.
+# Reference: https://gazebosim.org/docs/harmonic/install_ubuntu
+# hadolint ignore=DL3008,DL3015
+RUN curl -fsSL https://packages.osrfoundation.org/gazebo.gpg \
+        -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable $(. /etc/os-release && echo ${UBUNTU_CODENAME}) main" \
+        > /etc/apt/sources.list.d/gazebo-stable.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gz-harmonic \
+        ros-${ROS_DISTRO}-ros-gz \
+        && rm -rf /var/lib/apt/lists/*
 
 # uv - pinned version for reproducibility. INFRASTRUCTURE_DESIGN.md Section
 # 17.3 demands pinned wheelhouses at the edge; uv enforces that.
