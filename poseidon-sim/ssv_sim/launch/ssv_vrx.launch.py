@@ -1,18 +1,23 @@
-"""VRX SSV runtime launch skeleton.
+"""VRX-backed SSV runtime launch.
 
 Track: SSV runtime. Playbook: docs/runbooks/integration-ssv-vrx.md.
 Contract: SYSTEM_DESIGN.md Section 14.
 
-Replace the TODO sections with real VRX launch and topic remaps. The
-federated MVP only requires the topic contract to be honored; the
-underlying physics can evolve freely as long as the contract is stable.
+Current stage:
+- launches stock VRX competition world headless
+- publishes /ssv/state via adapter node
+- republishes /sim/ssv/clock and /sim/ssv/health via shim
+- remaps first-pass VRX sensor topics into /ssv/sensors/*
 """
 
 from __future__ import annotations
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, LogInfo
-from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -22,38 +27,113 @@ def generate_launch_description() -> LaunchDescription:
         description="Deterministic seed propagated to scenario engine and federation bridge.",
     )
 
-    # TODO(ssv): include the VRX world launch here. Typical pattern:
-    #   IncludeLaunchDescription(
-    #       PythonLaunchDescriptionSource(
-    #           os.path.join(get_package_share_directory("vrx_gz"),
-    #                        "launch", "competition.launch.py")
-    #       ),
-    #       launch_arguments={"world": "sydney_regatta"}.items(),
-    #   )
-
-    # TODO(ssv): spawn WAM-V and remap its default odometry / sensor
-    # topics -> /ssv/state and /ssv/sensors/*. Example:
-    #   Node(
-    #       package="vrx_gz",
-    #       executable="spawn_wamv",
-    #       remappings=[
-    #           ("/wamv/sensors/position/navsat", "/ssv/sensors/gnss"),
-    #           ("/wamv/sensors/imu/imu",         "/ssv/sensors/imu"),
-    #           ("/wamv/odom",                    "/ssv/state"),
-    #       ],
-    #   )
-
-    # TODO(ssv): add a small clock/health shim publishing /sim/ssv/clock
-    # and /sim/ssv/health so the federation bridge can sync. Reference
-    # pattern is the mock in
-    # poseidon-sim/ssv_sim/src/mock_ssv_runtime.py.
-
     banner = LogInfo(msg=[
-        "ssv_vrx.launch.py skeleton - seed=", LaunchConfiguration("seed"),
-        " - replace TODO sections with VRX launch and remaps.",
+        "ssv_vrx.launch.py starting - seed=", LaunchConfiguration("seed"),
+        " - VRX launch + contract shim + state adapter enabled.",
     ])
+
+    vrx_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("vrx_gz"),
+                "launch",
+                "competition.launch.py",
+            ])
+        ),
+        launch_arguments={
+            "world": "sydney_regatta",
+            "headless": "True",
+            "sim_mode": "full",
+            "bridge_competition_topics": "True",
+            "competition_mode": "False",
+            "name": "wamv",
+            "model": "wam-v",
+        }.items(),
+    )
+
+    state_adapter = Node(
+        package="poseidon_ssv_sim",
+        executable="ssv_state_adapter",
+        name="ssv_state_adapter",
+        output="screen",
+        parameters=[{
+            "input_topic": "/wamv/pose",
+            "output_topic": "/ssv/state",
+            "frame_id": "map",
+            "child_frame_id": "ssv/base_link",
+        }],
+    )
+
+    contract_shim = Node(
+        package="poseidon_ssv_sim",
+        executable="ssv_contract_shim",
+        name="ssv_contract_shim",
+        output="screen",
+        parameters=[{
+            "clock_rate_hz": 50.0,
+            "health_rate_hz": 2.0,
+        }],
+    )
+
+    imu_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="ssv_imu_relay",
+        output="screen",
+        arguments=[
+            "/wamv/sensors/imu/imu/data",
+            "/ssv/sensors/imu",
+        ],
+    )
+
+    gnss_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="ssv_gnss_relay",
+        output="screen",
+        arguments=[
+            "/wamv/sensors/gps/gps/fix",
+            "/ssv/sensors/gnss",
+        ],
+    )
+
+    lidar_scan_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="ssv_lidar_scan_relay",
+        output="screen",
+        arguments=[
+            "/wamv/sensors/lidars/lidar_wamv_sensor/scan",
+            "/ssv/sensors/lidar/scan",
+        ],
+    )
+
+    lidar_points_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="ssv_lidar_points_relay",
+        output="screen",
+        arguments=[
+            "/wamv/sensors/lidars/lidar_wamv_sensor/points",
+            "/ssv/sensors/lidar/points",
+        ],
+    )
+
+    # TODO(ssv): replace /wamv/pose-based approximation with a direct Gazebo
+    # world-state adapter if needed for higher-fidelity odometry.
+    # TODO(ssv): bridge /ssv/thruster_cmd and /ssv/rudder_cmd into VRX controls.
+    # TODO(ssv): remap remaining VRX sensors under /ssv/sensors/* as needed.
+    # TODO(ssv): disable/bypass native VRX wave forcing so env-service remains the
+    # single ocean truth source.
 
     return LaunchDescription([
         declare_seed,
         banner,
+        vrx_launch,
+        state_adapter,
+        contract_shim,
+        imu_relay,
+        gnss_relay,
+        lidar_scan_relay,
+        lidar_points_relay,
     ])
