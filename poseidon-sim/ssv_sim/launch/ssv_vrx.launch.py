@@ -24,7 +24,12 @@ def generate_launch_description() -> LaunchDescription:
     declare_seed = DeclareLaunchArgument(
         "seed",
         default_value="42",
-        description="Deterministic seed propagated to scenario engine and federation bridge.",
+        description=(
+            "Deterministic seed for the VRX runtime. Propagated into the "
+            "VRX competition launch include below so wave/wind/spawn "
+            "randomization is reproducible. Required by AGENTS.md Section 2 "
+            "(VRX runtime seed is a pinned MCAP determinism input)."
+        ),
     )
 
     banner = LogInfo(msg=[
@@ -32,6 +37,11 @@ def generate_launch_description() -> LaunchDescription:
         " - VRX launch + contract shim + state adapter enabled.",
     ])
 
+    # AGENTS.md Section 2: pass scenario seed into VRX so wave/wind RNG is
+    # deterministic across replays. If the VRX include does not accept a
+    # `seed` argument on the cloud box, it will be ignored - then we
+    # promote this to whatever VRX actually names the seed (e.g.
+    # `random_seed` or `vrx_seed`) in a follow-up.
     vrx_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
@@ -48,6 +58,7 @@ def generate_launch_description() -> LaunchDescription:
             "competition_mode": "False",
             "name": "wamv",
             "model": "wam-v",
+            "seed": LaunchConfiguration("seed"),
         }.items(),
     )
 

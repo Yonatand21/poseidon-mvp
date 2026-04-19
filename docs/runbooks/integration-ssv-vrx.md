@@ -33,7 +33,7 @@ Subscribe (Layer 2 publishes these; do not publish):
 
 ## Starting point
 
-1. Keep `poseidon-sim/ssv_sim/src/mock_ssv_runtime.py` as the arm64/Mac fallback.
+1. Keep `poseidon-sim/ssv_sim/poseidon_ssv_sim/mock_ssv_runtime.py` as the arm64/Mac fallback. Invoke via `ros2 run poseidon_ssv_sim mock_ssv_runtime` (entry point declared in `setup.py`) or directly with `python3`.
 2. Scaffold already committed:
    - `deploy/docker/sim-ssv-vrx.Dockerfile` (skeleton with TODOs)
    - `poseidon-sim/ssv_sim/launch/ssv_vrx.launch.py` (skeleton with TODOs)
@@ -93,5 +93,5 @@ VRX has a native wave plugin. Disable or bypass it so both vehicles subscribe to
 
 - Contract: `SYSTEM_DESIGN.md` Section 14
 - Architecture invariant: `AGENTS.md` Rule 1.1
-- Mock reference: `poseidon-sim/ssv_sim/src/mock_ssv_runtime.py`
+- Mock reference: `poseidon-sim/ssv_sim/poseidon_ssv_sim/mock_ssv_runtime.py`
 - If VRX build stalls: run VRX's stock launch outside Docker first, iterate remaps against the contract test, then dockerize once working
