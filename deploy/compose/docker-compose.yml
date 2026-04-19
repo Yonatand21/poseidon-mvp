@@ -178,31 +178,48 @@ services:
     networks: [ros2net]
     profiles: [viz]
 
-  unav-sim-render:
-    image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-base-dev:${POSEIDON_IMAGE_TAG:-dev}
+  # ROS 2 -> Unreal bridge (rosbridge_websocket).
+  # Serves PoseidonUE on dev workstations and the MCAP replay path
+  # (docs/runbooks/ue5-mcap-replay.md). Per ADR-0002, UNav-Sim on the
+  # cloud box uses its own native ROS 2 bridge instead, but this
+  # service stays deployed for the fallback + replay paths.
+  # Topic allowlist (Rule 1.1 enforcement) lives at
+  # poseidon-sim/rendering/bridge/rosbridge_server_allowlist.yaml.
+  unreal-bridge:
+    image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-unreal-bridge:${POSEIDON_IMAGE_TAG:-dev}
+    pull_policy: ${POSEIDON_PULL_POLICY:-missing}
+    build:
+      context: ../..
+      dockerfile: poseidon-sim/rendering/bridge/Dockerfile
     environment:
       <<: *common-env
     volumes:
-      - ../../poseidon-sim/rendering:/workspace/rendering
+      - ../../poseidon-sim/rendering:/workspace/poseidon-sim/rendering:ro
     networks: [ros2net]
     ports:
       - "9090:9090"
     profiles: [viz]
     command: >
-      bash -c "echo 'unav-sim-render placeholder - primary visual path for MVP demo' && sleep infinity"
+      bash -lc "source /opt/ros/jazzy/setup.bash &&
+      ros2 launch /workspace/poseidon-sim/rendering/bridge/bridge.launch.py"
 
-  poseidonue-bridge:
-    image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-base-dev:${POSEIDON_IMAGE_TAG:-dev}
+  # UNav-Sim renderer (PRIMARY visual path per SYSTEM_DESIGN.md Section 13).
+  # SKELETON: the Dockerfile builds a placeholder image that sleeps until
+  # the rendering integration track lands real UNav-Sim wiring per
+  # ADR-0002 + the integration-unav-sim runbook (TBD).
+  # Hard host requirement: Linux + NVIDIA GPU (cloud demo box).
+  unav-sim-render:
+    image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-unav-sim:${POSEIDON_IMAGE_TAG:-dev}
+    pull_policy: ${POSEIDON_PULL_POLICY:-missing}
+    build:
+      context: ../..
+      dockerfile: deploy/docker/unav-sim.Dockerfile
     environment:
       <<: *common-env
     volumes:
-      - ../../poseidon-sim/rendering:/workspace/rendering
+      - ../../poseidon-sim/rendering:/workspace/poseidon-sim/rendering:ro
     networks: [ros2net]
-    ports:
-      - "9091:9090"
     profiles: [viz]
-    command: >
-      bash -c "echo 'poseidonue-bridge fallback visual path' && sleep infinity"
 
 networks:
   ros2net:
