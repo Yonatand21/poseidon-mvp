@@ -32,23 +32,35 @@ These are the only inputs the dashboard needs. No DAVE/VRX dependency.
 
 ## Day-by-day (3-day target)
 
-### Day 1 - MCAP ingestion
+### Day 1 - MCAP ingestion (DONE on `feat/tier-2-evaluation`)
 
-- Add `mcap` Python lib dependency (`uv add mcap rosbags` or similar)
-- Implement `poseidon-sim/evaluation/metrics/mcap_reader.py` yielding messages for a given topic
-- Unit test: iterate `/auv/state` from the checked-in MCAP fixture
+- `mcap` + `mcap-ros2-support` added to `[project.optional-dependencies.eval]`
+- `poseidon-sim/evaluation/metrics/mcap_reader.py` yields decoded messages per topic
+- Registry + schema + report assembly landed with unit tests
+- CLI: `python3 -m evaluation.metrics.extract --mcap <path> [--strict]`
+- Wired into `tools/verify-backbone-t1.sh` (optional step 6) and a new
+  `evaluation-metrics` CI job
 
-### Day 2 - KPI extractors
+Install locally:
 
-Minimum KPI set (3-5 metrics):
+```bash
+uv sync --extra eval
+uv run pytest tests/unit/test_metrics_registry.py
+```
 
-- Mission duration (scenario end - scenario start from `/scenario/clock`)
-- Federation drift max (`drift_ns` from `/federation/sync_state`)
-- AUV track length (integrate distance from `/auv/state`)
-- SSV track length (integrate distance from `/ssv/state`)
-- Drop commit detected (bool from `/federation/drop_commit`)
+### Day 2 - KPI extractors (DONE)
 
-Each returns a scalar. Persist per-run KPIs as JSON next to the MCAP.
+Current KPI set (extend by dropping a new module in `kpis/`):
+
+- `mission_duration_s` - span of `/scenario/clock`
+- `federation_drift_max_ns` - peak `drift_ns` on `/federation/sync_state`
+- `auv_track_length_m` - integrated distance from `/auv/state`
+- `ssv_track_length_m` - integrated distance from `/ssv/state`
+- `drop_commit_observed` - bool from `/federation/drop_commit`
+
+Per-run artifact lands at `recordings/<run>/kpis.json`. Schema is fixed
+by `SCHEMA_VERSION` in `evaluation/metrics/schema.py`; bumping it is a
+coordinated change tracked in `docs/integration-log.md`.
 
 ### Day 3 - Streamlit UI
 
@@ -64,10 +76,25 @@ cd poseidon-sim/evaluation/dashboards/web
 uv run --with streamlit --with plotly streamlit run app.py -- --recordings ../../../../recordings
 ```
 
+## Contract-gate role
+
+This track is also the MCAP-level contract gate for Tracks A (AUV
+DAVE) and B (SSV VRX). Runtime PRs on those tracks must include the
+output of:
+
+```bash
+python3 -m evaluation.metrics.extract --mcap <their recording> --strict
+```
+
+exiting 0 before merging. Co-owned with `docs/integration-log.md`.
+
 ## Definition of done
 
 - Dashboard lists the `run_20260418_182015` MCAP and shows the 5 KPIs
-- KPI extractor unit tests pass
+- KPI extractor unit tests pass (`pytest tests/unit/test_metrics_registry.py`)
+- Fixture integration test passes (`pytest tests/integration/test_metrics_fixture.py`)
+- `--strict` exits 0 against the fixture MCAP
+- `evaluation-metrics` CI job green on `feat/tier-2-evaluation`
 - README updated with the `streamlit run` command
 - T2 section in `docs/runbooks/backbone-verification.md` passes cleanly
 

@@ -95,6 +95,46 @@ jobs:
       - name: Run layer-permission check
         run: python tools/check_layer_permissions.py
 
+  evaluation-metrics:
+    name: evaluation metrics + contract check
+    runs-on: ubuntu-latest
+    env:
+      # pytest picks this up from pyproject.toml; raw `python` / `python -m`
+      # invocations in this job need the same path injection so the
+      # dash-named source tree is importable.
+      PYTHONPATH: poseidon-sim
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.5.24"
+      - name: Set up Python
+        run: uv python install 3.11
+      - name: Sync eval + dev extras
+        run: uv sync --extra eval --extra dev
+      - name: Run metrics unit tests
+        run: uv run pytest tests/unit/test_metrics_registry.py -v
+      - name: Import smoke (registry loads without fixture)
+        run: |
+          uv run python -c "
+          from evaluation.metrics.registry import KPI_REGISTRY, load_builtin_kpis
+          load_builtin_kpis()
+          names = KPI_REGISTRY.names()
+          print('registered KPIs:', names)
+          assert len(names) >= 5, f'expected >=5 KPIs, got {len(names)}'
+          "
+      - name: Contract-check fixture MCAP (if present)
+        run: |
+          set -e
+          LATEST_MCAP="$(ls -1t recordings/*/*.mcap 2>/dev/null | head -1 || true)"
+          if [[ -z "${LATEST_MCAP}" ]]; then
+            echo "no MCAP fixture in repo - skipping strict contract-check"
+            exit 0
+          fi
+          uv run python -m evaluation.metrics.extract \
+            --mcap "${LATEST_MCAP}" --strict --no-write
+
   setup-scripts-syntax:
     name: setup script syntax
     runs-on: ubuntu-latest
