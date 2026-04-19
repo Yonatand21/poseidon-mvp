@@ -82,6 +82,23 @@ RUN add-apt-repository universe && \
         python3-rosdep \
         && rm -rf /var/lib/apt/lists/*
 
+# Gazebo Harmonic (LTS pair for ROS 2 Jazzy) + ros_gz bridge.
+# Required by both AUV (DAVE) and SSV (VRX) runtime images; installed
+# here so the shared Layer-1 simulation stack is one apt layer instead
+# of being duplicated per-vehicle.
+# Reference: https://gazebosim.org/docs/harmonic/install_ubuntu
+# AGENTS.md Section 3: pinned apt repo, no runtime install.
+# hadolint ignore=DL3008,DL3015
+RUN curl -fsSL https://packages.osrfoundation.org/gazebo.gpg \
+        -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable $(. /etc/os-release && echo ${UBUNTU_CODENAME}) main" \
+        > /etc/apt/sources.list.d/gazebo-stable.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gz-harmonic \
+        ros-${ROS_DISTRO}-ros-gz \
+        && rm -rf /var/lib/apt/lists/*
+
 # Build toolchain (needed for colcon builds of any downstream C++ package and
 # for Stonefish in the poseidon-sim image).
 # hadolint ignore=DL3008

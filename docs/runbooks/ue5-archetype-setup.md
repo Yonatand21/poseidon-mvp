@@ -12,7 +12,8 @@ team later when new archetypes are added.
 - `PoseidonUE` project opens cleanly in UE5 5.4. (If not, see
   [`../../poseidon-sim/rendering/unreal/PoseidonUE/README.md`](../../poseidon-sim/rendering/unreal/PoseidonUE/README.md).)
 - `poseidon-sim` compose service up, publishing `/auv/state` and
-  `/ssv/state` (real Stonefish on amd64, mock on Mac arm64).
+  `/ssv/state` (Gazebo Harmonic + DAVE/VRX on Linux amd64, mock on Mac
+  arm64).
 - `unreal-bridge` compose service up, listening on `ws://<host>:9090`.
 - ADR-0001 understood.
 
