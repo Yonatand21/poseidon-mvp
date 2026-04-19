@@ -53,20 +53,24 @@ services:
       python3 /workspace/poseidon-sim/auv_sim/src/mock_auv_runtime.py"
 
   sim-ssv:
-    image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-base-dev:${POSEIDON_IMAGE_TAG:-dev}
+    image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-sim-ssv-vrx:${POSEIDON_IMAGE_TAG:-dev}
     pull_policy: ${POSEIDON_PULL_POLICY:-missing}
     build:
       context: ../..
-      dockerfile: deploy/docker/base-dev.Dockerfile
+      dockerfile: deploy/docker/sim-ssv-vrx.Dockerfile
     environment:
       <<: *common-env
     volumes:
-      - ../../poseidon-sim:/workspace/poseidon-sim:ro
+      - ../../poseidon-sim:/workspace/poseidon-sim
     networks: [ros2net]
     profiles: [core, default]
     command: >
       bash -lc "source /opt/ros/jazzy/setup.bash &&
-      python3 /workspace/poseidon-sim/ssv_sim/src/mock_ssv_runtime.py"
+      source /opt/vrx_ws/install/setup.bash &&
+      cd /workspace/poseidon-sim &&
+      colcon build --packages-select poseidon_ssv_sim &&
+      source install/setup.bash &&
+      ros2 launch poseidon_ssv_sim ssv_vrx.launch.py"
 
   env-service:
     image: ${POSEIDON_IMAGE_REGISTRY:-ghcr.io/yonatand21/poseidon-mvp}/poseidon-base-dev:${POSEIDON_IMAGE_TAG:-dev}

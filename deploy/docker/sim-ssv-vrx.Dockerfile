@@ -19,22 +19,43 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 USER root
 
-# TODO(ssv): install Gazebo Harmonic via the gazebosim apt repository.
-# Reference: https://gazebosim.org/docs/harmonic/install_ubuntu
-# Coordinate with the AUV runtime track: land Gazebo Harmonic in
-# base-dev.Dockerfile so both runtimes share the layer. Keep this file lean.
+# Gazebo Harmonic already comes from poseidon-base-dev.
+# Keep this image focused on VRX build + runtime wiring.
 
-# TODO(ssv): clone and colcon-build VRX for ROS 2 Jazzy + Gazebo Harmonic.
-# Reference: https://github.com/osrf/vrx (main branch targets Harmonic+Jazzy).
-# Pin a specific commit SHA so the build is reproducible:
-#   ARG VRX_REV=<sha>
-#   RUN git clone --depth 1 https://github.com/osrf/vrx.git /src/vrx \
-#       && cd /src/vrx && git checkout ${VRX_REV}
-#   RUN cd /workspace && colcon build --packages-select <vrx-packages>
+ARG VRX_REF=v3.1.0
 
-# TODO(ssv): install the WAM-V USV model from VRX.
-# Mesh and config files should land under /workspace/poseidon-sim/ssv_sim/
-# at runtime via the bind mount in docker-compose.yml.
+# VRX build dependencies.
+# hadolint ignore=DL3008,DL3015
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3-vcstool \
+        python3-rosinstall-generator \
+        python3-rosdep \
+        python3-sdformat14 \
+        ros-${ROS_DISTRO}-xacro \
+        ros-${ROS_DISTRO}-ros-gz-interfaces \
+        ros-${ROS_DISTRO}-topic-tools \
+        && rm -rf /var/lib/apt/lists/*
+
+# Clone and build VRX for ROS 2 Jazzy + Gazebo Harmonic.
+RUN mkdir -p /opt/vrx_ws/src && \
+    git clone https://github.com/osrf/vrx.git /opt/vrx_ws/src/vrx && \
+    cd /opt/vrx_ws/src/vrx && \
+    git checkout ${VRX_REF}
+
+RUN rosdep init 2>/dev/null || true && \
+    rosdep update
+
+RUN bash -lc "source /opt/ros/${ROS_DISTRO}/setup.bash && \
+    cd /opt/vrx_ws && \
+    rosdep install --from-paths src --ignore-src -r -y --skip-keys="ament_cmake_pycodestyle" && \
+    colcon build --merge-install"
+
+RUN mkdir -p /opt/vrx_ws/install/share/vrx_gazebo/models/wamv/tmp && \
+    chown -R poseidon:poseidon /opt/vrx_ws/install/share/vrx_gazebo/models/wamv
+
+RUN echo 'source /opt/vrx_ws/install/setup.bash' >> /home/poseidon/.bashrc
+ENV VRX_WS=/opt/vrx_ws
+ENV GZ_SIM_RESOURCE_PATH=/opt/vrx_ws/install/share:${GZ_SIM_RESOURCE_PATH}
 
 USER poseidon
 WORKDIR /workspace
