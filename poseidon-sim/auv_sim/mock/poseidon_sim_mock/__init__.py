@@ -1,4 +1,4 @@
-"""Mock world publisher for ARM64 dev hosts without Stonefish.
+"""Mock world publisher for dev hosts without the Gazebo Harmonic + DAVE + VRX runtime.
 
 See the package README for the scope and limitations of this mock.
 """

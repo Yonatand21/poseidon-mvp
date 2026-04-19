@@ -99,8 +99,8 @@ RUN curl -fsSL https://packages.osrfoundation.org/gazebo.gpg \
         ros-${ROS_DISTRO}-ros-gz \
         && rm -rf /var/lib/apt/lists/*
 
-# Build toolchain (needed for colcon builds of any downstream C++ package and
-# for Stonefish in the poseidon-sim image).
+# Build toolchain (needed for colcon builds of any downstream C++ package,
+# including DAVE / VRX / ros_gz overlays in the poseidon-sim image).
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
